@@ -1,0 +1,43 @@
+AST -->
+
+CONSTANT: MAX VALUE: 100
+GLOBAL VARIABLE: a TYPE: int[100]
+GLOBAL VARIABLE: max TYPE: int
+
+FUNCTION: quicksort
+   RETURN_TYPE: void
+   PARAMETER: m TYPE: int
+   PARAMETER: n TYPE: int
+   VARIABLE: i TYPE: int
+   VARIABLE: j TYPE: int
+   VARIABLE: non_stop TYPE: int
+   VARIABLE: v TYPE: int
+   VARIABLE: x TYPE: int
+
+IF(<=(n,m),RETURN());
+=(i,-(m,1));
+=(j,n);
+=(v,a[n]);
+WHILE(non_stop,DO_WHILE(=(i,+(i,1)),<(a[i],v));DO_WHILE(=(j,-(j,1)),>(a[j],v));IF(>=(i,j),=(non_stop,0),=(x,a[i]);=(a[i],a[j]);=(a[j],x)));
+=(x,a[i]);
+=(a[i],a[n]);
+=(a[n],x);
+quicksort(m,j);
+quicksort(+(i,1),n)
+
+END_FUNCTION
+
+FUNCTION: main
+   RETURN_TYPE: int
+   VARIABLE: i TYPE: int
+   VARIABLE: j TYPE: int
+
+=(max,0);
+WHILE(||(<=(max,0),>(max,100)),PRINTF("Entre com o tamanho do vetor (valor entre 1 e 100): ");SCANF("%d",&(max)));
+FOR(=(i,0),<(i,max),(i)++,PRINTF("Entre com o valor da posicao %d: ",+(i,1));SCANF("%d",&(j));=(a[i],j));
+quicksort(0,-(max,1));
+FOR(=(i,0),<(i,max),(i)++,PRINTF("%d ",a[i]));
+PRINTF("\n");
+RETURN(0)
+
+END_FUNCTION

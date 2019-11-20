@@ -1,0 +1,22 @@
+AST -->
+
+
+FUNCTION: fatorial
+   RETURN_TYPE: int
+   PARAMETER: n TYPE: int
+
+IF(<=(n,0),RETURN(0));
+IF(==(n,1),RETURN(1),RETURN(*(n,fatorial(-(n,1)))))
+
+END_FUNCTION
+
+FUNCTION: main
+   RETURN_TYPE: int
+   VARIABLE: n TYPE: int
+
+PRINTF("Entre com um valor inteiro:");
+SCANF("%d",&(n));
+PRINTF("O fatorial de %d eh: %d\n",n,fatorial(n));
+RETURN(0)
+
+END_FUNCTION

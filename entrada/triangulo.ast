@@ -1,0 +1,21 @@
+AST -->
+
+
+FUNCTION: main
+   RETURN_TYPE: int
+   VARIABLE: a TYPE: int
+   VARIABLE: b TYPE: int
+   VARIABLE: c TYPE: int
+
+PRINTF("=== Determinar Tipo de Triangulo ===\n\n");
+PRINTF("Entre com o tamanho do lado A: ");
+SCANF("%d",&(a));
+PRINTF("Entre com o tamanho do lado B: ");
+SCANF("%d",&(b));
+PRINTF("Entre com o tamanho do lado C: ");
+SCANF("%d",&(c));
+PRINTF("\n");
+IF(&&(&&(<(a,+(b,c)),<(b,+(a,c))),<(c,+(a,b))),IF(&&(==(a,b),==(b,c)),PRINTF("Triangulo Equilatero."),IF(||(||(==(a,b),==(a,c)),==(c,b)),PRINTF("Triangulo Isosceles."),PRINTF("Triangulo Escaleno."))),PRINTF("Nao eh Triangulo!!!\n"));
+RETURN(0)
+
+END_FUNCTION
