@@ -1,0 +1,150 @@
+comparacoes:
+    a
+        beq $a, $zero, label
+    a == b
+        beq $a,$b,label
+    a != b
+        bne $a,$b,label 
+    a < b
+        slt $c, $a, $b
+        bne $c, $zero, label
+    a > b
+        slt $c, $b, $a
+        bne $c, $zero, label
+    a<=b
+        slt $c, $b, $a
+        beq $c, $zero, label
+    a>=b
+        slt $c, $a, $b
+        beq $c, $zero, label
+
+printf:
+    1)split no texto do printf(caso exista algum parametro)
+    2)escrever texto no .data com label l_id
+    3)avaliar e armazenar expressões
+    4)printar valores na ordem certa.
+    ex "PRINTF("O fatorial de %d eh: %d\n",n,fatorial(n)) " :
+    1-2)
+    .data
+        printf_1: "O fatorial de "
+        printf_2:" eh: "
+        printf_3: "\n"
+    3)
+        add $a0,$n,$zero        # coloca n como parametro
+        jal fatorial            # fatorial(n)
+        add $t0,$v0,$zero       # t0 = fatorial(n)
+        la $a0, printf_1        # carrega a primeira string
+	    addi $v0,$zero,4               # Código de impressão de string
+	    syscall                 # printa  "O fatorial de "
+        add $a0, $n,$zero       # carrega o valor de n em $a0
+        addi $v0,$zero,1               # Código de impressão de inteiro
+	    syscall                 # printa o valor de n 
+        la $a0, printf_2        # carrega a segunda string
+	    addi $v0,$zero,4               # Código de impressão de string
+	    syscall                 # printa " eh "
+        add $a0, $t0,$zero      # carrega o valor de fatorial(n) em $a0
+        addi $v0,$zero,1               # Código de impressão de inteiro
+	    syscall                 # printa o valor de fatorial(n)
+        la $a0, printf_3        # carrega a segunda string
+	    addi $v0,$zero,4               # Código de impressão de string
+	    syscall                 # printa "\n"
+
+scanf:
+    1) identificar o tipo de dado
+    2) fazer a leitura
+    3) armazenar valor 
+
+    ex "SCANF("%d",&(n))"" :
+        1)  %d -> 5             # inteiro
+            %s -> 8             # string
+            %c -> 12            # char
+        2) 
+            addi $v0,$zero, 5   # Código de leitura de inteiro
+	        syscall             # Faz a leitura de A
+        3)
+            add $t0, $v0,$zero  # armazena em $t0
+
+expressão operador binario:
+
+    1) montar arvore da expressão.
+    2) percorrer computando os filhos
+    ex:     i = j + k - l ou =(i,-(+(j,k),l))
+
+                =  (nó raiz)
+            /     \
+           i       - (nó 2)
+                  / \
+                 /   \
+        (nó 1)  +     l
+               /  \
+              /    \
+             j      k
+
+        add $r, $j,$k       # nó 1 -> (j + k)
+        sub $r, $r,$l       # nó 2 -> (j+k) -l
+        add $i, $r,$zero    # nó raiz -> i =( (j + k ) - l )
+
+expressão operador unario:
+    1) converter
+    ex: i++
+
+    add $i,$i,1 # i = i + 1
+
+if:
+
+    1) escrever comparacao.
+    2) verificar then/else
+    3) escrever then/else
+    
+    ex: IF(j,=(j,j),=(j,j)) then + else
+        
+        bne $j,$zero,else       # condicao
+        add $j,$j,$zero         # corpo do then
+        j fim_if                # pula p saida
+        else:                   # rotulo else
+            add $j,$j,$zero     # corpo else
+        fim_if:                 # saida
+
+do-while:
+    OBS. executa enquanto a condição for verdadeira
+    1) escrever rotulo
+    2) lista de comandos
+    3) criterio
+
+    ex: DO WHILE((j)++,j)
+
+    do_while:                       # rotulo
+        add $j,$j,1                 # lista de comandos
+        bne $j,$zero,do_while       # condicao de parada
+        # saida do loop
+
+while:
+    OBS. executa enquanto a condicao for VERDADEIRA
+    1)escrever rotulo
+    2)escrever condicao
+    3)escrever lista comandos
+
+    ex: WHILE(j,(j)++)
+
+    while:                      # rotulo
+        beq $j,$zero,saida      # condicao de parada
+        addi $j,$j,1            # lista de comandos....
+    saida:
+
+for:
+    OBS. executa enquanto a condição for FALSA
+    1) escrever inicialização
+    2) escrever rotulo
+    3) escrever condicao
+    4) escrever lista comandos
+    5) escrever atualizacao
+
+    ex: FOR(j,j,j++,j)
+
+    add $j,$j,$zero             # inicializacao
+    for:                        # rotulo
+        beq $j,$zero,saida      # condicao de parada
+        add $j,$j,$zero         # lista de comandos....
+        add $j,$j,1             # atualizacao
+        j for
+    saida:
