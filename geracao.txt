@@ -70,7 +70,7 @@ expressão operador binario:
     2) percorrer computando os filhos
     ex:     i = j + k - l ou =(i,-(+(j,k),l))
 
-                =  (nó raiz)
+               =  (nó raiz)
             /     \
            i       - (nó 2)
                   / \
@@ -148,3 +148,10 @@ for:
         add $j,$j,1             # atualizacao
         j for
     saida:
+
+
+** funcao
+
+** if -> and, or
+
+** live range.
