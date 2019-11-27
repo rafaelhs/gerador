@@ -1,0 +1,11 @@
+AST -->
+CONSTANT: hkey VALUE: 666
+GLOBAL VARIABLE: j TYPE: int
+FUNCTION: f
+    RETURN_TYPE: void
+    VARIABLE: i TYPE: int
+    VARIABLE: w TYPE: int[10]
+IF(j,=(w[(i)++],0));
+++(j);
+RETURN()
+END_FUNCTION
