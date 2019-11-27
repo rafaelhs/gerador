@@ -6,19 +6,37 @@
 using namespace std;
 
 
+
+std::string readInput();
+std::string getObjType(std::string line);
+int getNum(std::string str);
+std::vector<std::string> split(std::string str);
+
+void readProgram();
+Function* readFunction();
+Parameter* readParameter();
+
+
+
 int FILEEND = 0;
 std::string LINE;
-Program AST;
+Program *AST;
+
+
 
 
 std::string readInput() {
     char c;
-    std::string str;
+    std::string str = "";
     int n = 0;
 
     while(scanf("%c", &c)!=EOF){
         if(c == '\n'){n = 1; break;}
-        str.append(1, c);
+        if(str == "" && c == ' '){
+            continue;
+        }else{
+            str.append(1, c);
+        }
     }
 
     if(!n){FILEEND = 1;}
@@ -26,7 +44,7 @@ std::string readInput() {
     return str;
 }
 
-std::string getObjType (std::string line) {
+std::string getObjType(std::string line) {
     int i = 0;
     char c = ' ';
     std::string str = "";
@@ -55,6 +73,7 @@ int getNum(std::string str) {
     if(str == "CONSTANT") return CONSTANT;
     if(str == "GLOBALVARIABLE") return GLOBALVARIABLE;
     if(str == "FUNCTION") return FUNCTION;
+    if(str == "PARAMETER") return PARAMETER;
     if(str == "VARIABLE") return VARIABLE;
     if(str == "DOWHILE") return DOWHILE;
     if(str == "IF") return IF;
@@ -67,7 +86,7 @@ int getNum(std::string str) {
     if(str == "BOP") return BOP;
     if(str == "UOP") return UOP;
 
-    return 0;
+    return 999;
 }
 
 std::vector<std::string> split(std::string str) {
@@ -89,41 +108,94 @@ std::vector<std::string> split(std::string str) {
 
 
 void readProgram() {
-}
+    container *cont;
+    Constant *c;
+    GlobalVariable *gv;
+    Function *f;
 
-Function* readFunction() {
-    Function *f = new Function();
-    f->id = split(LINE)[1];  //function id
-    LINE = readInput();
-    f->return_type = split(LINE)[1]; // function return type
-    //read variables
-    //read commands
-    
-    container *c = new container();
-    c->type = FUNCTION;
-    c->obj = f;
-    AST.functions.push_back(*c);
-    return f;
-    
-}
-int main() {
-    Function f;
-    container *c;
+    AST = new Program();
+
+
     LINE = readInput();
     while(FILEEND != 1) {
-        if(LINE != ""){
-            cout << LINE << '\n';
+        if(LINE != "" && getNum(getObjType(LINE)) != PROGRAM){
             switch(getNum(getObjType(LINE))) {
                 case FUNCTION:
-                    readFunction();
-                    //c = new container();
-                    cout << "\n\n[" << ((Function *)(AST.functions[0].obj))->id << "]\n\n";
+                    f = readFunction();
+                    cont = new container();
+                    cont->type = FUNCTION;
+                    cont->obj = f;
+                    AST->functions.push_back(cont);
                     break;
-
                 default:
-                break;
+                    break;
             }
         }
         LINE = readInput();
     }
+
+    //read consant
+    //read global variable
+    //read functions    
+}
+
+Function* readFunction() {
+    container *cont;
+    Function *f = new Function();
+    Parameter *p;   
+    Variable *v;
+    Bop *bop;
+    Uop *uop;
+
+    f->id = split(LINE)[1];  //function id
+    LINE = readInput();
+    f->return_type = split(LINE)[1]; // function return type
+    //read param
+    //read variables
+    //read commands
+    
+
+    LINE = readInput();
+    while(LINE != "END_FUNCTION") {
+         if(LINE != ""){
+            switch(getNum(getObjType(LINE))) {
+                case PARAMETER:
+                    p = readParameter();
+                    cont = new container();
+                    cont->type = PARAMETER;
+                    cont->obj = p;
+                    f->param.push_back(cont);
+                    break;
+                case IF:
+
+                    break;
+                default:
+                    break;
+            }
+         }
+        LINE = readInput();
+    }
+
+    if(f->param.size() > 0){
+    cont = f->param[0];
+    p = (Parameter *)cont->obj;
+    cout << p->id;;
+
+    }
+
+
+    return f;
+}
+
+Parameter* readParameter() {
+    Parameter *p = new Parameter();
+    std::vector<std::string> splitLine = split(LINE);
+    p->id = splitLine[1];
+    p->type = splitLine[3];
+    return p;
+}
+
+
+int main() {
+   readProgram();
 }

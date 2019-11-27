@@ -9,7 +9,7 @@
 using namespace std;
 
 enum Obj{
-        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, BOP, UOP
+        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, BOP, UOP, OPRESULT
 };
 
 
@@ -46,10 +46,18 @@ class Function {
     public:
         int objType = FUNCTION;
         std::map<std::string, container*> symbTable; //tabela de simbolos da funcao
+        std::vector<container*> param; //lista de parametros
         std::string id; //identificador da funcao
         std::string return_type; //tipo de retorno
         std::vector<container*> commands; //lista de comandos
 
+};
+
+class Parameter {
+    public:
+        int objType = PARAMETER;
+        std:: string id; //nome do parametro
+        std:: string type; //tipo do parametro
 };
 
 class Variable {
@@ -130,4 +138,13 @@ class Uop {
         int opType; //tipo de operacao
         container *exp; //expressao
 };
+
+class OpResult {
+    public:
+        int objType = OPRESULT; 
+        std::string reg; //registrador
+        std::string type; //tipo do valor
+        std::string value; //valor do resultado
+};
+
 #endif
