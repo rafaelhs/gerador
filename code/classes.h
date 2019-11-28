@@ -9,7 +9,7 @@
 using namespace std;
 
 enum Obj{
-        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, BOP, UOP, OPRESULT
+        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF
 };
 
 
@@ -77,7 +77,7 @@ class DoWhile {
 class If {
     public:
         int objType = IF;
-        container *exp; //expressao booleana
+        std::vector<container*> exp; //expressao booleana
         std::vector<container*> then; //lista de comandos then
         std::vector<container*> els; //lista de comandos else
 };
@@ -124,19 +124,21 @@ class Return {
         container *exp; //expressao
 };
 
-class Bop {
+class Operation {
     public:
-        int objType = BOP;
+        int objType = OPERATION;
         int opType; //tipo de operacao
-        container *left; //filho a esquerda
+        container *left; //filho a esquerda, caso operacao unaria, eh o filho unico
         container *right; //filho a direita
 };
 
-class Uop {
+
+class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
-        int objType = UOP;
-        int opType; //tipo de operacao
-        container *exp; //expressao
+        int getObjType = OPLEAF;
+        std::string type; //variavel, valor constante ou funcao
+        std::string valueType; //Tipo do valor
+        std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = parametros;
 };
 
 class OpResult {
@@ -146,5 +148,7 @@ class OpResult {
         std::string type; //tipo do valor
         std::string value; //valor do resultado
 };
+
+
 
 #endif

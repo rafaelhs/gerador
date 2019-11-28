@@ -1,0 +1,11 @@
+AST -->
+
+
+FUNCTION: fatorial
+   RETURN_TYPE: int
+   PARAMETER: n TYPE: int
+
+IF(<=(n,0),RETURN(0));
+IF(==(n,1),RETURN(1),RETURN(*(n,fatorial(-(n,1)))))
+
+END_FUNCTION

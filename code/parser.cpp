@@ -15,7 +15,9 @@ std::vector<std::string> split(std::string str);
 void readProgram();
 Function* readFunction();
 Parameter* readParameter();
-
+If* readIf();
+Operation* readOperation(std::string arg);
+Return* readReturn(std::string arg);
 
 
 int FILEEND = 0;
@@ -83,11 +85,20 @@ int getNum(std::string str) {
     if(str == "SCANF") return SCANF;
     if(str == "EXIT") return EXIT;
     if(str == "RETURN") return RETURN;
-    if(str == "BOP") return BOP;
-    if(str == "UOP") return UOP;
+    if(str == "<=") return OPERATION; //TODO
+    if(str == "==") return OPERATION;
+    if(str == "*") return OPERATION;
+  //if(str == "") return ;
 
     return 999;
 }
+
+bool isNumber(std::string str) {
+    if(str.at(0) >= 48 && str.at(0) <= 57) {
+        return true;
+    }
+    return false;
+};
 
 std::vector<std::string> split(std::string str) {
     std::vector<std::string> tokens;
@@ -105,7 +116,109 @@ std::vector<std::string> split(std::string str) {
     return tokens;
 }
 
+std::vector<std::string> splitComma(std::string str) {
+    std::vector<std::string> tokens;
+    std:: string s = "";
+    char c;
+    int i = 0;
 
+    while(str.at(i) != '('){
+        i++;
+    }
+    i++;
+    while(true) {
+        c = str.at(i);
+        if(c == ','){ //se encontra virgula adiciona a expressao no vetor
+            tokens.push_back(s);
+            s = "";
+        }else if(c == '(') { //se encontra a abertura de parenteses continua copiando ate encontrar o fechamento
+            while(c != ')'){
+                s.append(1, c);
+                i++;
+                c = str.at(i);
+            }
+            s.append(1, c);
+        }else if(i >= str.size()-1){
+            tokens.push_back(s);
+            break;
+        }else{ //caso encontre um char qualquer, continua adicionaod aa string
+            s.append(1, c);
+        }
+        i++;
+    }
+
+    
+    return tokens;
+
+}
+
+std::vector<std::string> splitSemiCollon(std::string str) {
+    std::string s = "";
+    std::vector<std::string> tokens;
+
+    char c;
+    int i = 0;
+
+    while(i < str.size()) {
+        c = str.at(i);
+        if(c == ';'){
+            tokens.push_back(s);
+            s = "";
+        } else {
+            s.append(1, c);
+        }
+        i++;
+    }
+    if(s.size() > 0){
+        tokens.push_back(s);
+    }
+
+    return tokens;
+}
+
+std::vector<std::string> splitAmpersand(std::string str) {
+}
+
+std:: vector<std::string> splitOperation(std::string str) {
+    std::string s = "";
+    std::vector<std::string> tokens;
+
+    char c;
+    int i = 0;
+
+    c = str.at(i);
+    while(c != '(') {
+        s.append(1, c);
+        i++;
+        c = str.at(i);
+    }
+    tokens.push_back(s);
+    s = "";
+    i++;
+    c = str.at(i);
+    while(c != ')') {
+        if(c == '(') {
+            while(c != ')'){
+                s.append(1, c);
+                i++;
+                c = str.at(i);
+            }
+            s.append(1, c);
+        } else if(c == ',') {
+            tokens.push_back(s);
+            s = "";
+        } else {
+            s.append(1, c);
+        }
+        i++;
+        c = str.at(i);
+    }
+    if(s.size() > 0){
+        tokens.push_back(s);
+    }
+
+    return tokens;
+}
 
 void readProgram() {
     container *cont;
@@ -144,15 +257,11 @@ Function* readFunction() {
     Function *f = new Function();
     Parameter *p;   
     Variable *v;
-    Bop *bop;
-    Uop *uop;
+    If *iff;
 
     f->id = split(LINE)[1];  //function id
     LINE = readInput();
     f->return_type = split(LINE)[1]; // function return type
-    //read param
-    //read variables
-    //read commands
     
 
     LINE = readInput();
@@ -166,21 +275,20 @@ Function* readFunction() {
                     cont->obj = p;
                     f->param.push_back(cont);
                     break;
+                case VARIABLE:
+                    break;
                 case IF:
-
+                    iff = readIf();
+                    cont = new container();
+                    cont->type = IF;
+                    cont->obj = iff;
+                    f->commands.push_back(cont);
                     break;
                 default:
                     break;
             }
          }
         LINE = readInput();
-    }
-
-    if(f->param.size() > 0){
-    cont = f->param[0];
-    p = (Parameter *)cont->obj;
-    cout << p->id;;
-
     }
 
 
@@ -195,7 +303,116 @@ Parameter* readParameter() {
     return p;
 }
 
+If* readIf() {
+    cout << "if\n";
+    If *iff = new If();
+    container *c;
+    Operation *op;
+    Return *r;
+    std::vector<std::string> eThen, eElse, arg;
+    int i = 0;
+
+    arg = splitComma(LINE);
+    //read expression
+    op = readOperation(arg[0]);
+    c = new container();
+    c->type = OPERATION;
+    c->obj = op;
+    iff->exp.push_back(c);
+
+    //read all exp from then
+
+    eThen = splitSemiCollon(arg[1]);
+    for(i = 0; i < eThen.size(); i++) {
+        switch(getNum(getObjType(eThen[i]))){
+            case RETURN:
+                r = readReturn(eThen[i]);
+                c = new container();
+                c->type = RETURN;
+                c->obj = r;
+                iff->then.push_back(c);
+                break;
+            case OPERATION:
+                op = readOperation(eThen[i]);
+                c = new container();
+                c->type = OPERATION;
+                c->obj = op;
+                iff->then.push_back(c);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //read all exp from else
+
+    if(arg.size() > 2) {
+        eElse = splitSemiCollon(arg[1]);
+        for(i = 0; i < eElse.size(); i++) {
+            switch(getNum(getObjType(eElse[i]))){
+                case RETURN:
+                    r = readReturn(eElse[i]);
+                    c = new container();
+                    c->type = RETURN;
+                    c->obj = r;
+                    iff->els.push_back(c);
+                    break;
+                case OPERATION:
+                    op = readOperation(eElse[i]);
+                    c = new container();
+                    c->type = OPERATION;
+                    c->obj = op;
+                    iff->els.push_back(c);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return iff;
+}
+
+Operation* readOperation(std::string arg) { //TODO
+    Operation *op = new Operation;
+    vector<std::string> param = splitComma(arg);
+    cout << "OP\n";
+    //verificar cada filho
+    //criar as folhas
+    //adicionar ao objeto
+
+
+    return op;
+}
+
+Return* readReturn(std::string arg) {
+    cout << "RET\n";
+
+}
 
 int main() {
-   readProgram();
+    readProgram();
+
+    //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
+    //std::vector<std::string> v = splitComma("FOR(=(i,0),<(i,max),(i)++,PRINTF(\"Entre com o valor da posicao %d: \",+(i,1));SCANF(\"%d\",&(j));=(a[i],j));");
+    //std::vector<std::string> v = splitOperation("=(a[i],j,fat(1, 2))");
+    /*
+    std::vector<std::string> v = splitComma("=(i,0)");
+    for(int i = 0; i < v.size(); i++) {
+        cout << v[i] << "\n";
+    }
+    */
 }
+
+/*
+
+
+FOR(=(i,0),
+<(i,max),
+(i)++,
+
+PRINTF("Entre com o valor da posicao %d: ",+(i,1));
+SCANF("%d",&(j));
+=(a[i],j));
+
+
+*/
