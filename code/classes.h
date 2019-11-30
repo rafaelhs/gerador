@@ -123,15 +123,89 @@ class Return {
         int objType = RETURN;
         container *exp; //expressao
 };
-
+class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
+    public:
+        int getObjType = OPLEAF;
+        std::string type; //variavel = 0 , valor constante = 1  ou funcao = 2
+        std::string valueType; //Tipo do valor
+        std::string valueId; //nome da variavel
+        std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = parametros;
+        
+};
 class Operation {
     public:
         int objType = OPERATION;
         int opType; //tipo de operacao
         container *left; //filho a esquerda, caso operacao unaria, eh o filho unico
         container *right; //filho a direita
+        void print(){
+            OpLeaf *leftLeaf;
+            OpLeaf *rightLeaf;
+            
+            Operation *leftOp;
+            Operation *rightOp;
+            
+            if(left->type==OPLEAF){
+                leftLeaf = (OpLeaf*)left->obj;
+            }else{
+                leftOp = (Operation*)left->obj;
+                leftLeaf = leftOp->avaliar();
+            }
+            if(right->type==OPLEAF){
+                rightLeaf = (OpLeaf*)right->obj;
+            }else{
+                rightOp = (Operation*)right->obj;
+                rightLeaf = rightOp->avaliar();
+            }
+            if(opType==0){//ADICAO
+                std::cout<<"add $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }else if(opType==1){//Subtracao
+                std::cout<<"sub $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }else if(opType==2){//multiplicacao
+                std::cout<<"mul $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }else if(opType==3){//divisao
+                std::cout<<"div $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }
+
+
+        }
+        OpLeaf* avaliar(){
+            OpLeaf *leftLeaf;
+            OpLeaf *rightLeaf;
+            
+            Operation *leftOp;
+            Operation *rightOp;
+            
+            if(left->type==OPLEAF){
+                leftLeaf = (OpLeaf*)left->obj;
+            }else{
+                leftOp = (Operation*)left->obj;
+                leftLeaf = leftOp->avaliar();
+            }
+            if(right->type==OPLEAF){
+                rightLeaf = (OpLeaf*)right->obj;
+            }else{
+                rightOp = (Operation*)right->obj;
+                rightLeaf = rightOp->avaliar();
+            }
+            OpLeaf *op = new OpLeaf();
+                op->type = "v";
+                op->valueType = "int";
+                op->valueId = "t";
+            if(opType==0){//ADICAO
+                std::cout<<"add $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }else if(opType==1){//Subtracao
+                std::cout<<"sub $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }else if(opType==2){//multiplicacao
+                std::cout<<"mul $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }else if(opType==3){//divisao
+                std::cout<<"div $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+            }
+            return op;
+        }
 };
 
+<<<<<<< HEAD
 //TODO
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
@@ -143,6 +217,10 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = nome funcao;
 
 };
+=======
+
+
+>>>>>>> 5a05eb270b9b04eea01efe4ea0f8634b2808fe66
 
 class OpResult {
     public:
