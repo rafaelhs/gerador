@@ -18,7 +18,7 @@ Parameter* readParameter();
 If* readIf();
 Operation* readOperation(std::string arg);
 Return* readReturn(std::string arg);
-
+Variable* readVariable();
 
 int FILEEND = 0;
 std::string LINE;
@@ -91,6 +91,10 @@ int getNum(std::string str) {
   //if(str == "") return ;
 
     return 999;
+}
+
+int getOpNum(std::string str) {
+    return 0;
 }
 
 bool isNumber(std::string str) {
@@ -185,7 +189,6 @@ std:: vector<std::string> splitOperation(std::string str) {
 
     char c;
     int i = 0;
-
     c = str.at(i);
     while(c != '(') {
         s.append(1, c);
@@ -264,6 +267,12 @@ Function* readFunction() {
     f->return_type = split(LINE)[1]; // function return type
     
 
+    cont = new container();
+    cont->type = FUNCTION;
+    cont->obj = f;
+    AST->symbTable;
+    AST->symbTable.insert(std::pair<std::string, container*>(f->id, cont)); //add to global symbol table
+
     LINE = readInput();
     while(LINE != "END_FUNCTION") {
          if(LINE != ""){
@@ -274,8 +283,14 @@ Function* readFunction() {
                     cont->type = PARAMETER;
                     cont->obj = p;
                     f->param.push_back(cont);
+                    f->symbTable.insert(std::pair<std::string, container*>(p->id, cont));
                     break;
                 case VARIABLE:
+                    v = readVariable();
+                    cont = new container();
+                    cont->type = VARIABLE;
+                    cont->obj = v;
+                    f->symbTable.insert(std::pair<std::string, container*>(v->id, cont));
                     break;
                 case IF:
                     iff = readIf();
@@ -304,14 +319,12 @@ Parameter* readParameter() {
 }
 
 If* readIf() {
-    cout << "if\n";
     If *iff = new If();
     container *c;
     Operation *op;
     Return *r;
     std::vector<std::string> eThen, eElse, arg;
     int i = 0;
-
     arg = splitComma(LINE);
     //read expression
     op = readOperation(arg[0]);
@@ -340,6 +353,7 @@ If* readIf() {
                 iff->then.push_back(c);
                 break;
             default:
+
                 break;
         }
     }
@@ -373,9 +387,30 @@ If* readIf() {
 }
 
 Operation* readOperation(std::string arg) { //TODO
-    Operation *op = new Operation;
-    vector<std::string> param = splitComma(arg);
-    cout << "OP\n";
+    Operation *op = new Operation, *op2;
+    container *c;
+    vector<std::string> param = splitOperation(arg);
+    op->opType = getOpNum(param[0]);
+    if(getNum(getObjType(param[1])) == OPERATION) {
+        op2 = readOperation(param[1]);
+        c = new container();
+        c->type = OPERATION;
+        c->obj = op2;
+        op->left = c;
+    }else{
+        c = AST->symbTable.find(splitOperation[0]);
+    }
+    
+    //verificar quantidade de filhos
+    //para cada filho, verificar o que é
+        //se operacao, chamada recursiva
+        // caso nao seja, verificar as tabelas de simbolo.
+            //se encontrado, adicionar com o tipo encontrado
+            //se nao for enconrtado, e um valor constante
+
+
+
+
     //verificar cada filho
     //criar as folhas
     //adicionar ao objeto
@@ -385,22 +420,42 @@ Operation* readOperation(std::string arg) { //TODO
 }
 
 Return* readReturn(std::string arg) {
-    cout << "RET\n";
-
+    Return *r = new Return();
+    std::vector<std::string> v = splitOperation(arg);
+    std::string param;
+    if(v.size() > 1){
+        param = splitOperation(arg)[0];
+        Operation *op = readOperation(param);
+        container *c = new container();
+        c->type = OPERATION;
+        c->obj = op;
+        r->exp = c;
+    }
+    return r;
 }
-
+Variable* readVariable() {
+    
+}
 int main() {
     readProgram();
+
+
+
 
     //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
     //std::vector<std::string> v = splitComma("FOR(=(i,0),<(i,max),(i)++,PRINTF(\"Entre com o valor da posicao %d: \",+(i,1));SCANF(\"%d\",&(j));=(a[i],j));");
     //std::vector<std::string> v = splitOperation("=(a[i],j,fat(1, 2))");
+    //std::vector<std::string> v = splitComma("=(i,0)");
+    //std::vector<std::string> v = splitOperation("return(0)");
+
     /*
-    std::vector<std::string> v = splitComma("=(i,0)");
     for(int i = 0; i < v.size(); i++) {
         cout << v[i] << "\n";
     }
     */
+
+
+
 }
 
 /*

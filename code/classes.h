@@ -132,13 +132,16 @@ class Operation {
         container *right; //filho a direita
 };
 
-
+//TODO
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
-        int getObjType = OPLEAF;
+        int ObjType = OPLEAF;
         std::string type; //variavel, valor constante ou funcao
         std::string valueType; //Tipo do valor
-        std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = parametros;
+        std::string functionName; //
+
+        std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = nome funcao;
+
 };
 
 class OpResult {
