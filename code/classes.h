@@ -46,7 +46,7 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
 class Operation {
     public:
         int objType = OPERATION;
-        int opGroup;//todo operacao (artimetica/logica)
+        int opGroup;// operacao (artimetica/logica)
         int opType; //tipo de operacao
         container *left; //filho a esquerda, caso operacao unaria, eh o filho unico
         container *right; //filho a direita
@@ -55,19 +55,34 @@ class Operation {
             OpLeaf *leftLeaf,*rightLeaf;
             Operation *leftOp,*rightOp;
             int r = getNextRegister(reg);
+            int c1 = -1;
+            int c2 = -1;
+
             if(left->type==OPLEAF){
 
                 leftLeaf = (OpLeaf*)left->obj;
-                //todo verificar se é constante
+                if(leftLeaf->type==CONSTANT){
+                    c1= getNextRegister(reg);
+                    std::cout<<"addi $t"<<c2<<", $zero, "<<leftLeaf->valueId<<std::endl;
+                    leftLeaf->type = OP_VARIABLE;
+                    leftLeaf->valueType = INT;
+                    leftLeaf->valueId = "t"+to_string(c2);
+
+                }
             }else{
                 leftOp = (Operation*)left->obj;
                 leftLeaf = leftOp->print(reg);
             }
-
             if(right->type==OPLEAF){
                 rightLeaf = (OpLeaf*)right->obj;
 
-                //todo verificar se é constante
+                if(rightLeaf->type==CONSTANT){
+                    c2= getNextRegister(reg);
+                    std::cout<<"addi $t"<<c2<<", $zero, "<<rightLeaf->valueId<<std::endl;
+                    rightLeaf->type = OP_VARIABLE;
+                    rightLeaf->valueType = INT;
+                    rightLeaf->valueId = "t"+to_string(c2);
+                }
             }else{
                 rightOp = (Operation*)right->obj;
                 rightLeaf = rightOp->print(reg);
@@ -77,6 +92,7 @@ class Operation {
                 op->valueType = INT;
                 op->valueId = "t"+to_string(r);
             
+            cout<<opType<<endl;
             switch(opType){
                 case OP_ADD:
                 std::cout<<"add $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
@@ -94,6 +110,11 @@ class Operation {
                 std::cout<<"add $"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<",$zero"<<std::endl;
                 break;
             }
+            if(c1!=-1)
+                reg[c1]=false;
+            if(c2!=-1)
+                reg[c2]=false;
+            reg[r]=false;
             return op;
         }
 
@@ -101,13 +122,14 @@ class Operation {
             OpLeaf *leftLeaf,*rightLeaf;
             Operation *leftOp,*rightOp;
 
-            // todo verificar quando só existe o filho esquerdo (quicksort)
             if(right==NULL){
                 leftLeaf = (OpLeaf*)left->obj;
                 std::cout<<"beq $"<<leftLeaf->valueId<<",$zero"<<labelTrue<<endl;
                 return false;
             }
             int r = getNextRegister(reg);
+            int c1 = -1;
+            int c2 = -1;
 
             if(opType==LOGICAL_AND)
                 demorgan=true;
@@ -117,8 +139,14 @@ class Operation {
 
             if(left->type==OPLEAF){
                 leftLeaf = (OpLeaf*)left->obj;
-                //todo verificar se é constante
-            }else{
+                if(leftLeaf->type==CONSTANT){
+                    c1= getNextRegister(reg);
+                    std::cout<<"addi $t"<<c2<<", $zero, "<<leftLeaf->valueId<<std::endl;
+                    leftLeaf->type = OP_VARIABLE;
+                    leftLeaf->valueType = INT;
+                    leftLeaf->valueId = "t"+to_string(c2);
+                }            
+                }else{
                 leftOp = (Operation*)left->obj;
                 if(leftOp->opGroup==ARITHMETICAL){
                     leftLeaf = leftOp->print(reg);
@@ -129,7 +157,13 @@ class Operation {
             
             if(right->type==OPLEAF){
                 rightLeaf = (OpLeaf*)right->obj;
-                //todo verificar se é constante
+                if(rightLeaf->type==CONSTANT){
+                    c2= getNextRegister(reg);
+                    std::cout<<"addi $t"<<c2<<", $zero, "<<rightLeaf->valueId<<std::endl;
+                    rightLeaf->type = OP_VARIABLE;
+                    rightLeaf->valueType = INT;
+                    rightLeaf->valueId = "t"+to_string(c2);
+                }    
             }else{
                 rightOp = (Operation*)right->obj;
                 if(rightOp->opGroup==ARITHMETICAL){
@@ -196,6 +230,10 @@ class Operation {
                
             }
             reg[r]=false;
+            if(c1!=-1)
+                reg[c1]=false;
+            if(c2!=-1)
+                reg[c2]=false;
             return demorgan;
         }
 };
@@ -323,9 +361,21 @@ class For {
         container *condition; //condicao de parada
         container *adjustment; //ajuste
         std::vector<container*> commands; //lista de comandos
-        void print(){
-            Operation *opInit = (Operation*)init;
-            opInit->print();
+        void print(bool reg[]){
+            Operation *opInit = (Operation*)init->obj;
+            opInit->print(reg);
+
+            string lblTrue = "end_for";
+            string lblFalse = "for";
+            cout<<lblFalse<<":"<<endl;
+            Operation *opCondition = (Operation*)condition->obj;
+            opCondition->printLogicalOperation(reg,lblTrue,lblFalse,false);
+            cout<<"\n\n...\n\n"<<endl;
+
+            Operation *adjust = (Operation*)adjustment->obj;
+            adjust->print(reg);
+            cout<<" j for"<<endl;
+
         }
 };
 
