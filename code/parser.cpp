@@ -393,13 +393,13 @@ void testOperation(){
 
 
    OpLeaf *leftLeaf1 = new OpLeaf();
-        leftLeaf1->type = "v";
-        leftLeaf1->valueType = "int";
-        leftLeaf1->valueId = "a";
+        leftLeaf1->type = OP_VARIABLE;
+        leftLeaf1->valueType = INT;
+        leftLeaf1->valueId = "s0";
     OpLeaf *rightLeaf1 = new OpLeaf();
-        rightLeaf1->type = "v";
-        rightLeaf1->valueType = "int";
-        rightLeaf1->valueId = "b";
+        rightLeaf1->type = OP_VARIABLE;
+        rightLeaf1->valueType = INT;
+        rightLeaf1->valueId = "s1";
 
     container *leftContainer1 = new container();
         leftContainer1->type=OPLEAF;
@@ -409,7 +409,7 @@ void testOperation(){
         rightContainer1->obj = rightLeaf1;
 
     Operation *leftOp = new Operation();
-        leftOp->opType = 0; // add
+        leftOp->opType = OP_ADD; // add
         leftOp->left = leftContainer1;
         leftOp->right = rightContainer1;
 
@@ -417,37 +417,22 @@ void testOperation(){
         leftOpContainer->type = OPERATION;
         leftOpContainer->obj = leftOp;
 
-
-
-
-
-
-
-
     OpLeaf *rightLeaf = new OpLeaf();
-        rightLeaf->type = "v";
-        rightLeaf->valueType = "int";
-        rightLeaf->valueId = "c";
+        rightLeaf->type = OP_VARIABLE;
+        rightLeaf->valueType = INT;
+        rightLeaf->valueId = "s3";
 
     container *rightContainer = new container();
         rightContainer->type=OPLEAF;
         rightContainer->obj = rightLeaf;
 
     Operation root = Operation();
-    root.opType = 0; // add
+    root.opType = OP_ADD; // add
     root.left = leftOpContainer;
     root.right = rightContainer;
     root.print();
     std::cout<<"-------------------------"<<std::endl;
-    root.opType = 1; // sub
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
-    root.opType = 2; // mult
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
-    root.opType = 3; // div
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
+    
 
 }
 

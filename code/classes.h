@@ -9,9 +9,8 @@
 using namespace std;
 
 enum Obj{
-        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF
+        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF, OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,INT,CHAR
 };
-
 
 class container{
     public:
@@ -126,9 +125,9 @@ class Return {
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
         int getObjType = OPLEAF;
-        std::string type; //variavel = 0 , valor constante = 1  ou funcao = 2
-        std::string valueType; //Tipo do valor
-        std::string valueId; //nome da variavel
+        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION
+        int valueType; // char / int
+        std::string valueId; //nome do registrador
         std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = parametros;
         
 };
@@ -138,7 +137,7 @@ class Operation {
         int opType; //tipo de operacao
         container *left; //filho a esquerda, caso operacao unaria, eh o filho unico
         container *right; //filho a direita
-        void print(){
+        OpLeaf* print(){
             OpLeaf *leftLeaf;
             OpLeaf *rightLeaf;
             
@@ -149,60 +148,37 @@ class Operation {
                 leftLeaf = (OpLeaf*)left->obj;
             }else{
                 leftOp = (Operation*)left->obj;
-                leftLeaf = leftOp->avaliar();
+                leftLeaf = leftOp->print();
             }
             if(right->type==OPLEAF){
                 rightLeaf = (OpLeaf*)right->obj;
             }else{
                 rightOp = (Operation*)right->obj;
-                rightLeaf = rightOp->avaliar();
+                rightLeaf = rightOp->print();
             }
-            if(opType==0){//ADICAO
-                std::cout<<"add $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }else if(opType==1){//Subtracao
-                std::cout<<"sub $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }else if(opType==2){//multiplicacao
-                std::cout<<"mul $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }else if(opType==3){//divisao
-                std::cout<<"div $t,$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }
-
-
-        }
-        OpLeaf* avaliar(){
-            OpLeaf *leftLeaf;
-            OpLeaf *rightLeaf;
             
-            Operation *leftOp;
-            Operation *rightOp;
-            
-            if(left->type==OPLEAF){
-                leftLeaf = (OpLeaf*)left->obj;
-            }else{
-                leftOp = (Operation*)left->obj;
-                leftLeaf = leftOp->avaliar();
-            }
-            if(right->type==OPLEAF){
-                rightLeaf = (OpLeaf*)right->obj;
-            }else{
-                rightOp = (Operation*)right->obj;
-                rightLeaf = rightOp->avaliar();
-            }
             OpLeaf *op = new OpLeaf();
-                op->type = "v";
-                op->valueType = "int";
-                op->valueId = "t";
-            if(opType==0){//ADICAO
-                std::cout<<"add $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }else if(opType==1){//Subtracao
-                std::cout<<"sub $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }else if(opType==2){//multiplicacao
-                std::cout<<"mul $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
-            }else if(opType==3){//divisao
-                std::cout<<"div $"<<op->valueId<<"$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                op->type = OP_VARIABLE;
+                op->valueType = OP_VARIABLE;
+                op->valueId = "t0";
+            switch(opType){
+                case OP_ADD:
+                std::cout<<"add $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+                case OP_SUB:
+                std::cout<<"sub $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+                case OP_MUL:
+                std::cout<<"mul $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+                case OP_DIV:
+                std::cout<<"div $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
             }
-            return op;
+
+        return op;
         }
+        
 };
 
 
