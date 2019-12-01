@@ -389,56 +389,126 @@ Return* readReturn(std::string arg) {
 
 }
 
-void testOperation(){
+
+void arithmeticOperation(){
+    bool regT[10] = {false,false,false,false,false,false,false,false,false,false};
+    
+    OpLeaf *lRightLOP = new OpLeaf();
+        lRightLOP->type = OP_VARIABLE;
+        lRightLOP->valueType = INT;
+        lRightLOP->valueId = "s0";
+    OpLeaf *r_LOP = new OpLeaf();
+        r_LOP->type = OP_VARIABLE;
+        r_LOP->valueType = INT;
+        r_LOP->valueId = "s1";
+
+    container *lRightLOPC = new container();
+        lRightLOPC->type= OPLEAF;
+        lRightLOPC->obj = lRightLOP;
+
+    container *r_LOPC = new container();
+        r_LOPC->type= OPLEAF;
+        r_LOPC->obj = r_LOP;
 
 
-   OpLeaf *leftLeaf1 = new OpLeaf();
-        leftLeaf1->type = OP_VARIABLE;
-        leftLeaf1->valueType = INT;
-        leftLeaf1->valueId = "s0";
-    OpLeaf *rightLeaf1 = new OpLeaf();
-        rightLeaf1->type = OP_VARIABLE;
-        rightLeaf1->valueType = INT;
-        rightLeaf1->valueId = "s1";
 
-    container *leftContainer1 = new container();
-        leftContainer1->type=OPLEAF;
-        leftContainer1->obj = leftLeaf1;
-    container *rightContainer1 = new container();
-        rightContainer1->type=OPLEAF;
-        rightContainer1->obj = rightLeaf1;
+    Operation *add = new Operation();
+        add->opType= OP_ADD;
+        add->opGroup=ARITHMETICAL;
+        add->left = lRightLOPC;
+        add->right = r_LOPC;
 
-    Operation *leftOp = new Operation();
-        leftOp->opType = OP_ADD; // add
-        leftOp->left = leftContainer1;
-        leftOp->right = rightContainer1;
-
-    container *leftOpContainer = new container();
-        leftOpContainer->type = OPERATION;
-        leftOpContainer->obj = leftOp;
-
-    OpLeaf *rightLeaf = new OpLeaf();
-        rightLeaf->type = OP_VARIABLE;
-        rightLeaf->valueType = INT;
-        rightLeaf->valueId = "s3";
-
-    container *rightContainer = new container();
-        rightContainer->type=OPLEAF;
-        rightContainer->obj = rightLeaf;
-
-    Operation root = Operation();
-    root.opType = OP_ADD; // add
-    root.left = leftOpContainer;
-    root.right = rightContainer;
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
+    container *addC = new container();
+        addC->type= OPERATION;
+        addC->obj = add;
+        
+    add->print(regT);
     
 
+
+}
+
+void logicalOperation(){
+    bool regT[10] = {false,false,false,false,false,false,false,false,false,false};
+    // DoWhile *dw = new DoWhile();
+    While *dw = new While();
+   OpLeaf *l_LOP = new OpLeaf();
+        l_LOP->type = OP_VARIABLE;
+        l_LOP->valueType = INT;
+        l_LOP->valueId = "s0";
+    OpLeaf *r_LOP = new OpLeaf();
+        r_LOP->type = OP_VARIABLE;
+        r_LOP->valueType = INT;
+        r_LOP->valueId = "s1";
+
+    container *l_LOPC = new container();
+        l_LOPC->type= OPLEAF;
+        l_LOPC->obj = l_LOP;
+
+    container *r_LOPC = new container();
+        r_LOPC->type= OPLEAF;
+        r_LOPC->obj = r_LOP;
+
+
+
+    OpLeaf *l_ROP = new OpLeaf();
+        l_ROP->type = OP_VARIABLE;
+        l_ROP->valueType = INT;
+        l_ROP->valueId = "s2";
+    OpLeaf *r_ROP = new OpLeaf();
+        r_ROP->type = OP_VARIABLE;
+        r_ROP->valueType = INT;
+        r_ROP->valueId = "s3";
+
+    container *l_ROPC = new container();
+        l_ROPC->type= OPLEAF;
+        l_ROPC->obj = l_ROP;
+
+    container *r_ROPC = new container();
+        r_ROPC->type= OPLEAF;
+        r_ROPC->obj = r_ROP;
+    
+    
+    Operation *lop = new Operation();
+        lop->opGroup = LOGICAL;
+        lop->opType = EQUAL;
+        lop->left = l_LOPC;
+        lop->right = r_LOPC;
+
+    container *lopc = new container();
+        lopc->obj = lop;
+        lopc->type= OPERATION;
+
+
+    Operation *rop = new Operation();
+        rop->opGroup = LOGICAL;
+        rop->opType = LESS_THAN;
+        rop->left = l_ROPC;
+        rop->right = r_ROPC;
+    container *ropc = new container();
+        ropc->obj = rop;
+        ropc->type =OPERATION;
+
+
+
+    Operation *root = new Operation();
+        root->opType = LOGICAL_OR; 
+        root->opGroup =LOGICAL;
+        root->left = lopc;
+        root->right = ropc;
+
+    container *rCont = new container();
+        rCont->type=OPERATION;
+        rCont->obj = root;
+    cout<<"do{\n\n\n\n}while(s0 == s1) || (s2<s3);\n"<<endl;
+    dw->condition = rCont;
+    dw->print(regT);
 }
 
 int main() {
     // readProgram();
-    testOperation();
+    // arithmeticOperation();
+    logicalOperation();
     //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
     //std::vector<std::string> v = splitComma("FOR(=(i,0),<(i,max),(i)++,PRINTF(\"Entre com o valor da posicao %d: \",+(i,1));SCANF(\"%d\",&(j));=(a[i],j));");
     //std::vector<std::string> v = splitOperation("=(a[i],j,fat(1, 2))");
