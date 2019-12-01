@@ -398,7 +398,7 @@ Operation* readOperation(std::string arg) { //TODO
         c->obj = op2;
         op->left = c;
     }else{
-        c = AST->symbTable.find(splitOperation[0]);
+        //c = AST->symbTable.find(splitOperation[0]);
     }
     
     //verificar quantidade de filhos
@@ -436,80 +436,12 @@ Return* readReturn(std::string arg) {
 Variable* readVariable() {
     
 }
-<<<<<<< HEAD
 int main() {
     readProgram();
-=======
-
-void testOperation(){
-
-
-   OpLeaf *leftLeaf1 = new OpLeaf();
-        leftLeaf1->type = "v";
-        leftLeaf1->valueType = "int";
-        leftLeaf1->valueId = "a";
-    OpLeaf *rightLeaf1 = new OpLeaf();
-        rightLeaf1->type = "v";
-        rightLeaf1->valueType = "int";
-        rightLeaf1->valueId = "b";
-
-    container *leftContainer1 = new container();
-        leftContainer1->type=OPLEAF;
-        leftContainer1->obj = leftLeaf1;
-    container *rightContainer1 = new container();
-        rightContainer1->type=OPLEAF;
-        rightContainer1->obj = rightLeaf1;
-
-    Operation *leftOp = new Operation();
-        leftOp->opType = 0; // add
-        leftOp->left = leftContainer1;
-        leftOp->right = rightContainer1;
-
-    container *leftOpContainer = new container();
-        leftOpContainer->type = OPERATION;
-        leftOpContainer->obj = leftOp;
 
 
 
 
->>>>>>> 5a05eb270b9b04eea01efe4ea0f8634b2808fe66
-
-
-
-
-<<<<<<< HEAD
-=======
-    OpLeaf *rightLeaf = new OpLeaf();
-        rightLeaf->type = "v";
-        rightLeaf->valueType = "int";
-        rightLeaf->valueId = "c";
-
-    container *rightContainer = new container();
-        rightContainer->type=OPLEAF;
-        rightContainer->obj = rightLeaf;
-
-    Operation root = Operation();
-    root.opType = 0; // add
-    root.left = leftOpContainer;
-    root.right = rightContainer;
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
-    root.opType = 1; // sub
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
-    root.opType = 2; // mult
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
-    root.opType = 3; // div
-    root.print();
-    std::cout<<"-------------------------"<<std::endl;
-
-}
-
-int main() {
-    // readProgram();
-    testOperation();
->>>>>>> 5a05eb270b9b04eea01efe4ea0f8634b2808fe66
     //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
     //std::vector<std::string> v = splitComma("FOR(=(i,0),<(i,max),(i)++,PRINTF(\"Entre com o valor da posicao %d: \",+(i,1));SCANF(\"%d\",&(j));=(a[i],j));");
     //std::vector<std::string> v = splitOperation("=(a[i],j,fat(1, 2))");

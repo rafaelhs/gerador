@@ -205,7 +205,6 @@ class Operation {
         }
 };
 
-<<<<<<< HEAD
 //TODO
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
@@ -217,10 +216,6 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = nome funcao;
 
 };
-=======
-
-
->>>>>>> 5a05eb270b9b04eea01efe4ea0f8634b2808fe66
 
 class OpResult {
     public:
