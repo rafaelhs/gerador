@@ -439,7 +439,50 @@ Variable* readVariable() {
 int main() {
     readProgram();
 
+void testOperation(){
 
+
+   OpLeaf *leftLeaf1 = new OpLeaf();
+        leftLeaf1->type = OP_VARIABLE;
+        leftLeaf1->valueType = INT;
+        leftLeaf1->valueId = "s0";
+    OpLeaf *rightLeaf1 = new OpLeaf();
+        rightLeaf1->type = OP_VARIABLE;
+        rightLeaf1->valueType = INT;
+        rightLeaf1->valueId = "s1";
+
+    container *leftContainer1 = new container();
+        leftContainer1->type=OPLEAF;
+        leftContainer1->obj = leftLeaf1;
+    container *rightContainer1 = new container();
+        rightContainer1->type=OPLEAF;
+        rightContainer1->obj = rightLeaf1;
+
+    Operation *leftOp = new Operation();
+        leftOp->opType = OP_ADD; // add
+        leftOp->left = leftContainer1;
+        leftOp->right = rightContainer1;
+
+    container *leftOpContainer = new container();
+        leftOpContainer->type = OPERATION;
+        leftOpContainer->obj = leftOp;
+
+    OpLeaf *rightLeaf = new OpLeaf();
+        rightLeaf->type = OP_VARIABLE;
+        rightLeaf->valueType = INT;
+        rightLeaf->valueId = "s3";
+
+    container *rightContainer = new container();
+        rightContainer->type=OPLEAF;
+        rightContainer->obj = rightLeaf;
+
+    Operation root = Operation();
+    root.opType = OP_ADD; // add
+    root.left = leftOpContainer;
+    root.right = rightContainer;
+    root.print();
+    std::cout<<"-------------------------"<<std::endl;
+    
 
 
     //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
