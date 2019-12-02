@@ -28,7 +28,9 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         int regTemp;
         std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = id;
         std::vector<container*> values;
-        
+        OpLeaf* printFunction();
+        void printParameters();
+
 };
 
 class Operation {
@@ -53,6 +55,7 @@ class Program {
         std::vector<container*> arrays; //lista de vetores
         std::vector<container*> functions; //lista de funcoes
         void print();
+        void printPrintf();
 };
 
 class Constant {
@@ -77,6 +80,8 @@ class RegisterData{
         int getNextRegister();
         void clearRegister(int r);
         std::string getReg(string name);
+        void stackUp();
+        void unstack();
 };
 
 class Function {
@@ -152,7 +157,6 @@ class Printf {
         int idLabel; //identificador
         std::string str; //texto do printf
         std::vector<std::string> dataLabels;
-        std::map<std::string,int> printLabels;
         std::vector<container*> exp; //lista de expressoes
         void print();
         void printLabel();

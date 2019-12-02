@@ -345,6 +345,7 @@ Function* readFunction() {
     Scanf *scf;
     CURRENTFUNCTION = f;
     f->id = split(LINE)[1];  //function id
+    std::cout<<f->id<<endl;
 
     LINE = readInput();
     f->return_type = split(LINE)[1]; // function return type
@@ -714,6 +715,7 @@ Scanf* readScanf(std::string arg) {
     Operation *op;
     OpLeaf *opl;
     std::vector<std::string> param = splitOperation(arg);
+        cout<<"buga buga\n\n\n"<<param[1]<<"-"<<param[2]<<"\n\n\n\nbuga buga\n";
 
     scf->str = param[1];
     switch (getNum(getObjType(param[2]))) {
