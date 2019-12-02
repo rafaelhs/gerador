@@ -8,44 +8,44 @@ RegisterData *rData;
 
 void descricao(int d){
     switch(d){
-        case PROGRAM: cout<<"\tPROGRAM"<<endl;        return;
-        case CONSTANT: cout<<"\tCONSTANT"<<endl;              return;
-        case GLOBALVARIABLE: cout<<"\tGLOBALVARIABLE"<<endl;  return;
-        case FUNCTION: cout<<"\tFUNCTION"<<endl;              return;
-        case PARAMETER: cout<<"\tPARAMETER"<<endl;            return;
-        case VARIABLE: cout<<"\tVARIABLE"<<endl;              return;
-        case DOWHILE: cout<<"\tDOWHILE"<<endl;                return;
-        case IF: cout<<"\tIF"<<endl;                          return;
-        case WHILE: cout<<"\tWHILE"<<endl;                    return;
-        case FOR: cout<<"\tFOR"<<endl;                        return;
-        case PRINTF: cout<<"\tPRINTF"<<endl;                  return;
-        case SCANF: cout<<"\tSCANF"<<endl;                    return;
-        case EXIT: cout<<"\tEXIT"<<endl;                      return;
-        case RETURN: cout<<"\tRETURN"<<endl;                  return;
-        case OPERATION: cout<<"\tOPERATION"<<endl;            return;
-        case OPRESULT: cout<<"\tOPRESULT"<<endl;              return;
-        case OPLEAF: cout<<"\tOPLEAF"<<endl;                  return;
-        case OP_ADD: cout<<"\tOP_ADD"<<endl;                  return;
-        case OP_SUB: cout<<"\tOP_SUB"<<endl;                  return;
-        case OP_MUL: cout<<"\tOP_MUL"<<endl;                  return;
-        case OP_DIV: cout<<"\tOP_DIV"<<endl;                  return;
-        case OP_VARIABLE: cout<<"\tOP_VARIABLE"<<endl;        return;
-        case OP_CONSTANT: cout<<"\tOP_CONSTANT"<<endl;        return;
-        case OP_FUNCTION: cout<<"\tOP_FUNCTION"<<endl;        return;
-        case OP_ASSIGN: cout<<"\tOP_ASSIGN"<<endl;            return;
-        case INT: cout<<"\tINT"<<endl;                        return;
-        case CHAR: cout<<"\tCHAR"<<endl;                      return;
-        case LOGICAL_AND: cout<<"\tLOGICAL_AND"<<endl;        return;
-        case LOGICAL_OR: cout<<"\tLOGICAL_OR"<<endl;          return;
-        case GREATER_THAN: cout<<"\tGREATER_THAN"<<endl;      return;
-        case LESS_THAN: cout<<"\tLESS_THAN"<<endl;            return;
-        case EQUAL: cout<<"\tEQUAL"<<endl;                    return;
-        case NOT_EQUAL: cout<<"\tNOT_EQUAL"<<endl;            return;
-        case LESS_EQUAL: cout<<"\tLESS_EQUAL"<<endl;          return;
-        case GREATER_EQUAL: cout<<"\tGREATER_EQUAL"<<endl;    return;
-        case ARITHMETICAL: cout<<"\tARITHMETICAL"<<endl;      return;
-        case LOGICAL: cout<<"\tLOGICAL"<<endl;                return;
-        case OP_TEMPORARY: cout<<"\tOP_TEMPORARY"<<endl;      return;
+        case PROGRAM: cout<<"\t#PROGRAM"<<endl;        return;
+        case CONSTANT: cout<<"\t#CONSTANT"<<endl;              return;
+        case GLOBALVARIABLE: cout<<"\t#GLOBALVARIABLE"<<endl;  return;
+        case FUNCTION: cout<<"\t#FUNCTION"<<endl;              return;
+        case PARAMETER: cout<<"\t#PARAMETER"<<endl;            return;
+        case VARIABLE: cout<<"\t#VARIABLE"<<endl;              return;
+        case DOWHILE: cout<<"\t#DOWHILE"<<endl;                return;
+        case IF: cout<<"\t#IF"<<endl;                          return;
+        case WHILE: cout<<"\t#WHILE"<<endl;                    return;
+        case FOR: cout<<"\t#FOR"<<endl;                        return;
+        case PRINTF: cout<<"\t#PRINTF"<<endl;                  return;
+        case SCANF: cout<<"\t#SCANF"<<endl;                    return;
+        case EXIT: cout<<"\t#EXIT"<<endl;                      return;
+        case RETURN: cout<<"\t#RETURN"<<endl;                  return;
+        case OPERATION: cout<<"\t#OPERATION"<<endl;            return;
+        case OPRESULT: cout<<"\t#OPRESULT"<<endl;              return;
+        case OPLEAF: cout<<"\t#OPLEAF"<<endl;                  return;
+        case OP_ADD: cout<<"\t#OP_ADD"<<endl;                  return;
+        case OP_SUB: cout<<"\t#OP_SUB"<<endl;                  return;
+        case OP_MUL: cout<<"\t#OP_MUL"<<endl;                  return;
+        case OP_DIV: cout<<"\t#OP_DIV"<<endl;                  return;
+        case OP_VARIABLE: cout<<"\t#OP_VARIABLE"<<endl;        return;
+        case OP_CONSTANT: cout<<"\t#OP_CONSTANT"<<endl;        return;
+        case OP_FUNCTION: cout<<"\t#OP_FUNCTION"<<endl;        return;
+        case OP_ASSIGN: cout<<"\t#OP_ASSIGN"<<endl;            return;
+        case INT: cout<<"\t#INT"<<endl;                        return;
+        case CHAR: cout<<"\t#CHAR"<<endl;                      return;
+        case LOGICAL_AND: cout<<"\t#LOGICAL_AND"<<endl;        return;
+        case LOGICAL_OR: cout<<"\t#LOGICAL_OR"<<endl;          return;
+        case GREATER_THAN: cout<<"\t#GREATER_THAN"<<endl;      return;
+        case LESS_THAN: cout<<"\t#LESS_THAN"<<endl;            return;
+        case EQUAL: cout<<"\t#EQUAL"<<endl;                    return;
+        case NOT_EQUAL: cout<<"\t#NOT_EQUAL"<<endl;            return;
+        case LESS_EQUAL: cout<<"\t#LESS_EQUAL"<<endl;          return;
+        case GREATER_EQUAL: cout<<"\t#GREATER_EQUAL"<<endl;    return;
+        case ARITHMETICAL: cout<<"\t#ARITHMETICAL"<<endl;      return;
+        case LOGICAL: cout<<"\t#LOGICAL"<<endl;                return;
+        case OP_TEMPORARY: cout<<"\t#OP_TEMPORARY"<<endl;      return;
     }  
 }
 
@@ -120,7 +120,7 @@ void Function::printParam(){
     for(int i = 0 ; i < param.size() ; i++){
         string id = ((Parameter*)param.at(i)->obj)->id;
         string reg = rData->addReg(id);
-        cout<<"\tadd $"<<reg<<", $v"+to_string(i)<<", $zero"<<endl;
+        cout<<"\tadd $"<<reg<<", $a"+to_string(i)<<", $zero"<<endl;
         
     }
 }
@@ -288,6 +288,41 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
     rData->clearRegister(r);
     return demorgan;
 }
+//================ OpLeaf ========================
+OpLeaf* OpLeaf::printFunction(){
+    OpLeaf * op =  new OpLeaf();
+    op->valueId="n";
+    rData->stackUp();
+    printParameters();
+    cout<<"jal "<<valueId<<endl;
+    rData->unstack();
+    op->regTemp = rData->getNextRegister();
+    cout<<"add $t"<<op->regTemp<<", $v0, $zero"<<endl;
+    return op;
+}
+void OpLeaf::printParameters(){
+    OpLeaf *opl;
+    Operation *op;
+    for(int i = 0 ; i < values.size(); i++){
+        container *c = values.at(i);
+        if(c->type == OPLEAF){
+            opl = (OpLeaf*) c->obj;
+            // if()
+            if(opl->type == CONSTANT){
+            cout<<"addi $a"<<i<<", $zero"<<", $"<<opl->valueId<<endl;
+            }else if(opl->type == VARIABLE){
+                cout<<"add $a"<<i<<", $"<<rData->getReg(opl->valueId)<<", $zero"<<endl;
+            }
+
+        }else{
+            op = (Operation*)c->obj;
+            opl = (OpLeaf*)op->print();
+            cout<<"add $a"<<i<<", $t"<<opl->valueId<<", $zero"<<endl;
+            rData->clearRegister(opl->regTemp);
+        }
+    }
+}
+
 //============== DO WHILE ====================
 void DoWhile::print(){
     Operation *op = (Operation*)condition->obj;
@@ -365,6 +400,23 @@ void While::print(){
 }
 //============== RETURN ======================
 void Return::print(){
+    cout<<exp<<endl;
+    Operation *op ;
+    OpLeaf *opl;
+    descricao(exp->type);
+    if(exp->type == OPERATION){
+        op = (Operation*)exp->obj;
+        opl = (OpLeaf*)op->print();
+        cout<<"add $v0, $t"<<opl->valueId<<", $zero"<<endl;
+        rData->clearRegister(opl->regTemp);
+    }else if( exp->type == OPLEAF){
+        opl = (OpLeaf*) exp->obj;
+        if(opl->type == CONSTANT){
+            cout<<"addi $v0, $zero"<<", $"<<opl->valueId<<endl;
+        }else if(opl->type == VARIABLE){
+            cout<<"add $v0, $"<<rData->getReg(opl->valueId)<<", $zero"<<endl;
+        }
+    }
     return;
 }
 //=============== SCANF ======================
@@ -384,7 +436,7 @@ void Printf::print(){
     for(int i = 0 ; i < dataLabels.size(); i++){
         string label = dataLabels.at(i);
         if(label!=""){
-            cout<<"\tli $v0, 4"<<endl;
+            cout<<"\taddi $v0, $zero, 4"<<endl;
             cout<<"\tla $a0, "<<label<<endl;
             cout<<"\tsyscall"<<endl;
         }else{
@@ -393,11 +445,15 @@ void Printf::print(){
             if(c->type==OPLEAF){
                 opl = (OpLeaf*)c->obj;
                 if(opl->type == OP_VARIABLE){
-                    cout<<"\tli $v0, 1"<<endl;
+                    cout<<"\taddi $v0, $zero, 1"<<endl;
                     cout<<"\tadd $a0, $zero, $"<<rData->getReg(opl->valueId)<<endl;
                     cout<<"\tsyscall"<<endl;
                 }else if (opl->type == OP_FUNCTION){
-                    
+                    opl = opl->printFunction();
+                    cout<<"\taddi $v0, $zero, 1"<<endl;
+                    cout<<"\tadd $a0, $zero, $"<<rData->getReg(opl->valueId)<<endl;
+                    cout<<"\tsyscall"<<endl;
+                    rData->clearRegister(opl->regTemp);
                 }
             }
             qtdPar++;
@@ -405,7 +461,6 @@ void Printf::print(){
 
     }
 }
-
 void Printf::printLabel(){
     int pos = 0;
     string label = "printF"+to_string(idLabel);
@@ -468,4 +523,20 @@ int RegisterData::getNextRegister(){
         }        
     }
     return 9;
+}
+void RegisterData::stackUp(){
+    for(int i = 0; i < 10 ; i++){
+        if(tempRegisters[i]){
+            cout<<"subi $sp, $sp, 4"<<endl;
+            cout<<"sw $t"<<i<<", 0($sp)"<<endl;
+        }
+    }
+}
+void RegisterData::unstack(){
+    for(int i = 0; i < 10 ; i++){
+        if(tempRegisters[i]){
+            cout<<"addi $sp, $sp, 4"<<endl;
+            cout<<"sw $t"<<i<<", 0($sp)"<<endl;
+        }
+    }
 }
