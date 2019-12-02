@@ -404,9 +404,78 @@ class Return {
         int objType = RETURN;
         container *exp; //expressao
 };
+class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
+    public:
+        int getObjType = OPLEAF;
+        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION
+        int valueType; // char / int
+        std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = nome da funcao;
+        std::vector<container *> values; //Parametros da funcao
+        
+};
+class Operation {
+    public:
+        int objType = OPERATION;
+        int opType; //tipo de operacao
+        container *left; //filho a esquerda, caso operacao unaria, eh o filho unico
+        container *right; //filho a direita
+        OpLeaf* print(){
+            OpLeaf *leftLeaf;
+            OpLeaf *rightLeaf;
+            
+            Operation *leftOp;
+            Operation *rightOp;
+            
+            if(left->type==OPLEAF){
+                leftLeaf = (OpLeaf*)left->obj;
+            }else{
+                leftOp = (Operation*)left->obj;
+                leftLeaf = leftOp->print();
+            }
+            if(right->type==OPLEAF){
+                rightLeaf = (OpLeaf*)right->obj;
+            }else{
+                rightOp = (Operation*)right->obj;
+                rightLeaf = rightOp->print();
+            }
+            
+            OpLeaf *op = new OpLeaf();
+                op->type = OP_VARIABLE;
+                op->valueType = OP_VARIABLE;
+                op->valueId = "t0";
+            switch(opType){
+                case OP_ADD:
+                std::cout<<"add $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+                case OP_SUB:
+                std::cout<<"sub $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+                case OP_MUL:
+                std::cout<<"mul $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+                case OP_DIV:
+                std::cout<<"div $"<<op->valueId<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<std::endl;
+                break;
+            }
 
+        return op;
+        }
+        
+};
 
+//TODO
+/*
+class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
+    public:
+        int ObjType = OPLEAF;
+        std::string type; //variavel, valor constante ou funcao
+        std::string valueType; //Tipo do valor
+        std::string functionName; //
 
+        std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = nome funcao;
+
+};
+*/
 class OpResult {
     public:
         int objType = OPRESULT; 
