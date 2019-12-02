@@ -698,9 +698,6 @@ Variable* readVariable() {
     v->type = splitLine[3];
     return v;
 }
-int main() {
-    readProgram();
-
 
 void arithmeticOperation(){
     bool regT[10] = {false,false,false,false,false,false,false,false,false,false};
@@ -911,35 +908,5 @@ void logicalOperation(){
 }
 
 int main() {
-    // readProgram();
-    // arithmeticOperation();
-    logicalOperation();
-    //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
-    //std::vector<std::string> v = splitComma("FOR(=(i,0),<(i,max),(i)++,PRINTF(\"Entre com o valor da posicao %d: \",+(i,1));SCANF(\"%d\",&(j));=(a[i],j));");
-    //std::vector<std::string> v = splitOperation("=(a[i],j,fat(1, 2))");
-    //std::vector<std::string> v = splitComma("=(i,0)");
-    //std::vector<std::string> v = splitOperation("return(0)");
-
-    /*
-    for(int i = 0; i < v.size(); i++) {
-        cout << v[i] << "\n";
-    }
-    */
-
-
-
+    logicalOperation();  
 }
-
-/*
-
-
-FOR(=(i,0),
-<(i,max),
-(i)++,
-
-PRINTF("Entre com o valor da posicao %d: ",+(i,1));
-SCANF("%d",&(j));
-=(a[i],j));
-
-
-*/
