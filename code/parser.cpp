@@ -236,6 +236,7 @@ std::vector<std::string> splitSemiCollon(std::string str) {
 }
 
 std::vector<std::string> splitAmpersand(std::string str) {
+    return vector<string>();
 }
 
 std:: vector<std::string> splitOperation(std::string str) {
@@ -333,6 +334,9 @@ Function* readFunction() {
     Scanf *scf;
     CURRENTFUNCTION = f;
     f->id = split(LINE)[1];  //function id
+    std::cout<<"\n\n\n\nchupacabra\n\n\n\n\n";
+    std::cout<<f->id<<endl;
+
     LINE = readInput();
     f->return_type = split(LINE)[1]; // function return type
     
@@ -728,6 +732,7 @@ Variable* readVariable() {
 
 int main() {
     readProgram();
-
-    
+    cout<<"\n\n\n\n Código gerado: \n\n\n\n";
+    AST->print();
+    return 1;
 }
