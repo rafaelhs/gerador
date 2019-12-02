@@ -600,8 +600,8 @@ void logicalOperation(){
 
 int main() {
     // readProgram();
-    arithmeticOperation();
-    // logicalOperation();
+    // arithmeticOperation();
+    logicalOperation();
     //std::vector<std::string> v = splitSemiCollon("=(a[i],j))");
     //std::vector<std::string> v = splitComma("FOR(=(i,0),<(i,max),(i)++,PRINTF(\"Entre com o valor da posicao %d: \",+(i,1));SCANF(\"%d\",&(j));=(a[i],j));");
     //std::vector<std::string> v = splitOperation("=(a[i],j,fat(1, 2))");
