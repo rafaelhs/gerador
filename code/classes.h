@@ -9,7 +9,8 @@
 using namespace std;
 
 enum Obj{
-        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF, OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,OP_ASSIGN,INT,CHAR,LOGICAL_AND,LOGICAL_OR, GREATER_THAN,LESS_THAN,EQUAL,NOT_EQUAL,LESS_EQUAL,GREATER_EQUAL,ARITHMETICAL,LOGICAL
+        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF,
+        OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,OP_ASSIGN,INT,CHAR,LOGICAL_AND,LOGICAL_OR, GREATER_THAN,LESS_THAN,EQUAL,NOT_EQUAL,LESS_EQUAL,GREATER_EQUAL,ARITHMETICAL,LOGICAL,OP_TEMPORARY
 };
 
 class container{
@@ -22,8 +23,9 @@ class container{
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
         int getObjType = OPLEAF;
-        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION
+        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION,OP_TEMP
         int valueType; // char / int
+        int regTemp;
         std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = id;
         std::vector<container *> values;
         
@@ -37,8 +39,10 @@ class Operation {
         container *left; //filho a esquerda, caso operacao unaria, eh o filho unico
         container *right; //filho a direita
 
-        OpLeaf* print(bool reg[]);
-        bool printLogicalOperation(bool reg[],string labelTrue,string labelFalse,bool demorgan);
+        OpLeaf* print();
+        OpLeaf* evalArithmeticLeaf(container *c);
+        bool printLogicalOperation(string labelTrue,string labelFalse,bool demorgan);
+        OpLeaf* evalLogicalLeaf(container *c,string labelTrue,string labelFalse,bool demorgan);
 };
 
 class Program {
@@ -65,6 +69,16 @@ class GlobalVariable {
         std::string type; //tipo da variavel
 };
 
+class RegisterData{
+    public:
+        std::map<std::string, std::string> regName; // map de conversão: variavel -> registrador
+        bool tempRegisters[10]; //lista de uso de registradores
+        string addReg(string name);
+        int getNextRegister();
+        void clearRegister(int r);
+        std::string getReg(string name);
+};
+
 class Function {
     public:
         int objType = FUNCTION;
@@ -73,6 +87,9 @@ class Function {
         std::string id; //identificador da funcao
         std::string return_type; //tipo de retorno
         std::vector<container*> commands; //lista de comandos
+        void print();
+        void evalSymbTable();
+        void printParam();
 
 };
 
@@ -95,7 +112,7 @@ class DoWhile {
         int objType = DOWHILE;
         std::vector<container*> commands; //lista de comandos
         container *condition; //condicao de parada
-        void print(bool reg[]);
+        void print();
 };
 
 class If {
@@ -104,7 +121,7 @@ class If {
         std::vector<container*> exp; //expressao booleana
         std::vector<container*> then; //lista de comandos then
         std::vector<container*> els; //lista de comandos else
-        void print(bool reg[]);
+        void print();
 };
 
 class While {
@@ -112,7 +129,7 @@ class While {
         int objType = WHILE;
         container *condition; //condicao de parada
         std::vector<container*> commands; //lista de comandos
-        void print(bool reg[]);
+        void print();
 };
 
 class For {
@@ -122,7 +139,7 @@ class For {
         container *condition; //condicao de parada
         container *adjustment; //ajuste
         std::vector<container*> commands; //lista de comandos
-        void print(bool reg[]);
+        void print();
 };
 
 class Printf {
@@ -130,6 +147,7 @@ class Printf {
         int objType = PRINTF;
         std::string str; //texto do printf
         std::vector<container*> exp; //lista de expressoes
+        void print();
 };
 
 class Scanf {
@@ -137,18 +155,21 @@ class Scanf {
         int objType = SCANF; 
         std::string str; //texto do scanf
         container *address; //endereco
+        void print();
 };
 
 class Exit {
     public:
         int objType = EXIT;
         container *exp; //expressao
+        void print();
 };
 
 class Return {
     public:
         int objType = RETURN;
         container *exp; //expressao
+        void print();
 };
 
 class OpResult {
