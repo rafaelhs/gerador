@@ -52,15 +52,15 @@ void descricao(int d){
 void printObj(container *c){
     switch(c->type){
 
-        case OPERATION: ((Operation*)c->obj)->print();
-        case DOWHILE: ((DoWhile*)c->obj)->print();
-        case IF: ((If*)c->obj)->print();
-        case WHILE: ((While*)c->obj)->print();
-        case FOR: ((For*)c->obj)->print();
-        case PRINTF: ((Printf*)c->obj)->print();
-        case SCANF: ((Scanf*)c->obj)->print();
-        case EXIT: ((Exit*)c->obj)->print();
-        case RETURN: ((Return*)c->obj)->print();
+        case OPERATION: ((Operation*)c->obj)->print();  return;
+        case DOWHILE: ((DoWhile*)c->obj)->print();      return;
+        case IF: ((If*)c->obj)->print();                return;
+        case WHILE: ((While*)c->obj)->print();          return;
+        case FOR: ((For*)c->obj)->print();              return;
+        case PRINTF: ((Printf*)c->obj)->print();        return;
+        case SCANF: ((Scanf*)c->obj)->print();          return;
+        case EXIT: ((Exit*)c->obj)->print();            return;
+        case RETURN: ((Return*)c->obj)->print();        return;
 
 
     }
@@ -358,8 +358,8 @@ void Return::print(){
 }
 //=============== SCANF ======================
 void Scanf::print(){
-    cout<<"tipo do endereco: "<<address->type<<endl;
-    cout<<"texto do scanf: "<<str<<endl;
+    
+    cout<<"\ttexto do scanf: "<<str<<endl;
     return;
 }
 //=============== Exit =======================
@@ -368,7 +368,7 @@ void Exit::print(){
 }
 //============== PRINTF ======================
 void Printf::print(){
-    cout<<"\tprintf: "<<str<<endl;
+    cout<<"\ttexto do printf: "<<str<<endl;
 }
 
 void Printf::printLabel(){

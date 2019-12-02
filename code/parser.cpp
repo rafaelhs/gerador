@@ -298,7 +298,6 @@ Function* readFunction() {
     Scanf *scf;
     CURRENTFUNCTION = f;
     f->id = split(LINE)[1];  //function id
-    std::cout<<"\n\n\n\nchupacabra\n\n\n\n\n";
     std::cout<<f->id<<endl;
 
     LINE = readInput();
@@ -457,7 +456,7 @@ Operation* readOperation(std::string arg) {
     std::vector<std::string> param = splitOperation(arg);
     std::string vname;
     op->opType = getNum(param[0]);
-    
+
     switch(getNum(getObjType(param[1]))) {
         case OPERATION: 
             op2 = readOperation(param[1]);
@@ -649,6 +648,7 @@ Scanf* readScanf(std::string arg) {
     Operation *op;
     OpLeaf *opl;
     std::vector<std::string> param = splitOperation(arg);
+        cout<<"buga buga\n\n\n"<<param[1]<<"-"<<param[2]<<"\n\n\n\nbuga buga\n";
 
     scf->str = param[1];
     switch (getNum(getObjType(param[2]))) {
