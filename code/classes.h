@@ -9,7 +9,11 @@
 using namespace std;
 
 enum Obj{
-        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF, OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,OP_ASSIGN,INT,CHAR,LOGICAL_AND,LOGICAL_OR, GREATER_THAN,LESS_THAN,EQUAL,NOT_EQUAL,LESS_EQUAL,GREATER_EQUAL,ARITHMETICAL,LOGICAL
+        PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF, 
+        OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,OP_ASSIGN,
+        INT,CHAR,
+        LOGICAL_AND,LOGICAL_OR, GREATER_THAN,LESS_THAN,EQUAL,NOT_EQUAL,LESS_EQUAL,GREATER_EQUAL,
+        ARITHMETICAL,LOGICAL
 };
 
 
@@ -39,7 +43,7 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION
         int valueType; // char / int
         std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = id;
-        std::vector<std::string> values;
+        std::vector<container*> values;
         
 };
 
@@ -289,6 +293,7 @@ class Variable {
 class DoWhile {
     public:
         int objType = DOWHILE;
+        int idLabel; //identificador
         std::vector<container*> commands; //lista de comandos
         container *condition; //condicao de parada
         void print(bool reg[]){
@@ -312,6 +317,7 @@ class DoWhile {
 class If {
     public:
         int objType = IF;
+        int idLabel; //identificador
         std::vector<container*> exp; //expressao booleana
         std::vector<container*> then; //lista de comandos then
         std::vector<container*> els; //lista de comandos else
@@ -334,6 +340,7 @@ class If {
 class While {
     public:
         int objType = WHILE;
+        int idLabel; //identificador
         container *condition; //condicao de parada
         std::vector<container*> commands; //lista de comandos
         void print(bool reg[]){
@@ -357,6 +364,7 @@ class While {
 class For {
     public:
         int objType = FOR;
+        int idLabel; //identificador
         container *init; //expressao de inicializacao
         container *condition; //condicao de parada
         container *adjustment; //ajuste
@@ -382,6 +390,7 @@ class For {
 class Printf {
     public:
         int objType = PRINTF;
+        int idLabel; //identificador
         std::string str; //texto do printf
         std::vector<container*> exp; //lista de expressoes
 };
@@ -403,7 +412,7 @@ class Return {
     public:
         int objType = RETURN;
         container *exp; //expressao
-};
+};/*
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
         int getObjType = OPLEAF;
@@ -462,7 +471,7 @@ class Operation {
         }
         
 };
-
+*/
 //TODO
 /*
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
