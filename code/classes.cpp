@@ -16,6 +16,11 @@ int getNextRegister(bool reg[]){
     return r;
 }
 
+void Program::print(){
+    
+}
+
+
 OpLeaf* Operation::print(bool reg[]){
     OpLeaf *leftLeaf,*rightLeaf;
     Operation *leftOp,*rightOp;

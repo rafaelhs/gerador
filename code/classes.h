@@ -48,6 +48,7 @@ class Program {
         std::vector<container*> printF; //lista de printfs
         std::vector<container*> arrays; //lista de vetores
         std::vector<container*> functions; //lista de funcoes
+        void print();
 };
 
 class Constant {
