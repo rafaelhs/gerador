@@ -127,8 +127,8 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         int getObjType = OPLEAF;
         int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION
         int valueType; // char / int
-        std::string valueId; //nome do registrador
-        std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = parametros;
+        std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = nome da funcao;
+        std::vector<container *> values; //Parametros da funcao
         
 };
 class Operation {
@@ -182,6 +182,7 @@ class Operation {
 };
 
 //TODO
+/*
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
         int ObjType = OPLEAF;
@@ -192,7 +193,7 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         std::vector<std::string> values; //caso variavel = id, caso constante = valor, caso funcao = nome funcao;
 
 };
-
+*/
 class OpResult {
     public:
         int objType = OPRESULT; 
