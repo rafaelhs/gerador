@@ -27,7 +27,7 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         int valueType; // char / int
         int regTemp;
         std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = id;
-        std::vector<container *> values;
+        std::vector<container*> values;
         
 };
 
@@ -53,6 +53,7 @@ class Program {
         std::vector<container*> arrays; //lista de vetores
         std::vector<container*> functions; //lista de funcoes
         void print();
+        void printPrintf();
 };
 
 class Constant {
@@ -110,6 +111,7 @@ class Variable {
 class DoWhile {
     public:
         int objType = DOWHILE;
+        int idLabel; //identificador
         std::vector<container*> commands; //lista de comandos
         container *condition; //condicao de parada
         void print();
@@ -118,6 +120,7 @@ class DoWhile {
 class If {
     public:
         int objType = IF;
+        int idLabel; //identificador
         std::vector<container*> exp; //expressao booleana
         std::vector<container*> then; //lista de comandos then
         std::vector<container*> els; //lista de comandos else
@@ -127,6 +130,7 @@ class If {
 class While {
     public:
         int objType = WHILE;
+        int idLabel; //identificador
         container *condition; //condicao de parada
         std::vector<container*> commands; //lista de comandos
         void print();
@@ -135,6 +139,7 @@ class While {
 class For {
     public:
         int objType = FOR;
+        int idLabel; //identificador
         container *init; //expressao de inicializacao
         container *condition; //condicao de parada
         container *adjustment; //ajuste
@@ -145,9 +150,9 @@ class For {
 class Printf {
     public:
         int objType = PRINTF;
+        int idLabel; //identificador
         std::string str; //texto do printf
         std::vector<std::string> dataLabels;
-        std::map<std::string,int> printLabels;
         std::vector<container*> exp; //lista de expressoes
         void print();
         void printLabel();

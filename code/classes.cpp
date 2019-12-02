@@ -68,13 +68,7 @@ void printObj(container *c){
 
 void Program::print(){
     
-    cout<<".data"<<"\t\t#rotulos e textos printf"<<endl;
-    //todo printar os printf
-    cout<<printF.size()<<endl;
-    for(int i = 0 ; i < printF.size() ; i++){
-        Printf  *pf = (Printf*)printF.at(i)->obj;
-        pf->printLabel();
-    }
+    printPrintf();
     //todo printar os vetores
     cout<<".size"<<"\trotulos de vetores "<<endl;
     //printar a funcao;
@@ -87,6 +81,15 @@ void Program::print(){
 
 
 }
+void Program::printPrintf(){
+    if(printF.size()==0)
+        return;
+    cout<<".data"<<"\t\t#rotulos e textos printf"<<endl;
+    for(int i = 0 ; i < printF.size() ; i++){
+        Printf  *pf = (Printf*)printF.at(i)->obj;
+        pf->printLabel();
+    }
+}
 //============== FUNCTION ====================
 
 void Function::print(){
@@ -96,7 +99,6 @@ void Function::print(){
     printParam();
     for(int i = 0 ; i < commands.size() ; i++ ){
         container *c = commands.at(i);
-        descricao(c->type);
         printObj(c);
     }
     cout<<"\n\n";
@@ -189,13 +191,13 @@ OpLeaf* Operation::print(){
         r3 = rData->getReg(r3);
     
     switch(opType){
-        case OP_ADD:    cout<<"\tadd $"<<r1<<",$"<<r2<<",$"<<r3<<std::endl;   break;
-        case OP_SUB:    cout<<"\tsub $"<<r1<<",$"<<r2<<",$"<<r3<<std::endl;   break;
-        case OP_MUL:    cout<<"\tmul $"<<r1<<",$"<<r2<<",$"<<r3<<std::endl;   break;
-        case OP_DIV:    cout<<"\tdiv $"<<r1<<",$"<<r2<<",$"<<r3<<std::endl;   break;
-        case OP_ASSIGN: cout<<"\tadd $"<<r2<<",$"<<r3<<",$zero"<<std::endl;   
-                        rData->clearRegister(op->regTemp);                  break;
-        default:        cout<<"\toperacao aritmetica erro"<<endl;             break;
+        case OP_ADD:    std::cout<<"\tadd $"<<r1<<", $"<<r2<<", $"<<r3<<std::endl;   break;
+        case OP_SUB:    std::cout<<"\tsub $"<<r1<<", $"<<r2<<", $"<<r3<<std::endl;   break;
+        case OP_MUL:    std::cout<<"\tmul $"<<r1<<", $"<<r2<<", $"<<r3<<std::endl;   break;
+        case OP_DIV:    std::cout<<"\tdiv $"<<r1<<", $"<<r2<<", $"<<r3<<std::endl;   break;
+        case OP_ASSIGN: std::cout<<"\tadd $"<<r2<<", $"<<r3<<", $zero"<<std::endl;   
+                        rData->clearRegister(op->regTemp);                           break;
+        default:        std::cout<<"\toperacao aritmetica erro"<<std::endl;          break;
     }
     if(leftLeaf->type == OP_TEMPORARY)
         rData->clearRegister(leftLeaf->regTemp);
@@ -209,7 +211,7 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
 
     if(right==NULL){
         leftLeaf = (OpLeaf*)left->obj;
-        cout<<"bne $"<<leftLeaf->valueId<<",$zero"<<labelTrue<<endl;
+        std::cout<<"bne $"<<leftLeaf->valueId<<",$zero"<<labelTrue<<std::endl;
         return false;
     }
     if(opType==LOGICAL_AND)
@@ -222,58 +224,59 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
     leftLeaf = evalLogicalLeaf(left,labelTrue,labelFalse,demorgan);
     rightLeaf = evalLogicalLeaf(right,labelTrue,labelFalse,demorgan);
     int r = rData->getNextRegister();
-    cout<<"if tipo: ";
     descricao(opType);
+    string r1 = rData->getReg(leftLeaf->valueId);
+    string r2 = rData->getReg(rightLeaf->valueId);
     switch(opType){
         case GREATER_THAN:
             if(!demorgan){
-                cout<<"\tslt $t"<<r<<" ,$"<<rightLeaf->valueId<<" ,$"<<leftLeaf->valueId<<endl;
-                cout<<"\tbne $t"<<r<<" ,$zero, "<<labelTrue<<endl;
+                std::cout<<"\tslt $t"<<r<<" ,$"<<r2<<" ,$"<<r1<<std::endl;
+                std::cout<<"\tbne $t"<<r<<" ,$zero, "<<labelTrue<<std::endl;
             }else{
-                cout<<"\tslt $t"<<r<<" ,$"<<rightLeaf->valueId<<" ,$"<<leftLeaf->valueId<<endl;
-                cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelFalse<<endl;
+                std::cout<<"\tslt $t"<<r<<" ,$"<<r2<<" ,$"<<r1<<std::endl;
+                std::cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelFalse<<std::endl;
             }
         break;
         case LESS_THAN:
             if(!demorgan){
-                cout<<"\tslt $t"<<r<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<endl;
-                cout<<"\tbne $t"<<r<<"$zero, "<<labelTrue<<endl;
+                std::cout<<"\tslt $t"<<r<<",$"<<r1<<",$"<<r2<<std::endl;
+                std::cout<<"\tbne $t"<<r<<"$zero, "<<labelTrue<<std::endl;
             }else{
-                cout<<"\tslt $t"<<r<<" ,$"<<leftLeaf->valueId<<" ,$"<<rightLeaf->valueId<<endl;
-                cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelFalse<<endl;
+                std::cout<<"\tslt $t"<<r<<" ,$"<<r1<<" ,$"<<r2<<std::endl;
+                std::cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelFalse<<std::endl;
             }
         break;
         case EQUAL:
             if(!demorgan){
-                cout<<"\tbeq $"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<", "<<labelTrue<<endl;
+                std::cout<<"\tbeq $"<<r1<<",$"<<r2<<", "<<labelTrue<<std::endl;
             }else{
-                cout<<"\tbne $"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<", "<<labelFalse<<endl;
+                std::cout<<"\tbne $"<<r1<<",$"<<r2<<", "<<labelFalse<<std::endl;
             }
         break;
         case NOT_EQUAL:
             if(!demorgan){
-                cout<<"\tbne $"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<", "<<labelTrue<<endl;
+                std::cout<<"\tbne $"<<r1<<",$"<<r2<<", "<<labelTrue<<std::endl;
             }else{
-                cout<<"\tbeq $"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<", "<<labelFalse<<endl;
+                std::cout<<"\tbeq $"<<r1<<",$"<<r2<<", "<<labelFalse<<std::endl;
             }
         break;
         case LESS_EQUAL:
             if(!demorgan){
-                cout<<"\tslt $t"<<r<<" ,$"<<rightLeaf->valueId<<" ,$"<<leftLeaf->valueId<<endl;
-                cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelTrue;
+                std::cout<<"\tslt $t"<<r<<" ,$"<<r2<<" ,$"<<r1<<std::endl;
+                std::cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelTrue<<std::endl;
             }else{
-                cout<<"\tslt $t"<<r<<" ,$"<<rightLeaf->valueId<<" ,$"<<leftLeaf->valueId<<endl;
-                cout<<"\tbne $t"<<r<<" ,$zero, "<<labelFalse<<endl;
+                std::cout<<"\tslt $t"<<r<<" ,$"<<r2<<" ,$"<<r1<<std::endl;
+                std::cout<<"\tbne $t"<<r<<" ,$zero, "<<labelFalse<<std::endl;
             }
 
         break;
         case GREATER_EQUAL:
             if(!demorgan){
-                cout<<"\tslt $t"<<r<<" ,$"<<leftLeaf->valueId<<" ,$"<<rightLeaf->valueId<<endl;
-                cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelTrue<<endl;
+                std::cout<<"\tslt $t"<<r<<" ,$"<<leftLeaf->valueId<<" ,$"<<r2<<std::endl;
+                std::cout<<"\tbeq $t"<<r<<" ,$zero, "<<labelTrue<<std::endl;
             }else{
-                cout<<"\tslt $t"<<r<<",$"<<leftLeaf->valueId<<",$"<<rightLeaf->valueId<<endl;
-                cout<<"\tbne $t"<<r<<"$zero, "<<labelFalse<<endl;
+                std::cout<<"\tslt $t"<<r<<",$"<<leftLeaf->valueId<<",$"<<r2<<std::endl;
+                std::cout<<"\tbne $t"<<r<<"$zero, "<<labelFalse<<std::endl;
             }
         break;
     
@@ -288,9 +291,11 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
 //============== DO WHILE ====================
 void DoWhile::print(){
     Operation *op = (Operation*)condition->obj;
-    string lblTrue = "do_while";
-    string lblFalse = "end_do_while";
+    string idlb = to_string(idLabel);
+    string lblTrue = "do_while"+idlb;
+    string lblFalse = "end_do_while"+idlb;
     cout<<lblTrue<<":"<<endl;
+    // todo printar comandos
     cout<<"\n\n...\n\n"<<endl;
     bool t = op->printLogicalOperation(lblTrue,lblFalse,false);
     // se não for AND 
@@ -299,22 +304,28 @@ void DoWhile::print(){
     }else{
         cout<<"j "<<lblTrue<<endl;
     }
-    cout<<lblFalse<<endl;
+    cout<<lblFalse<<":"<<endl;
     
 }
 //================ IF ========================
 void If::print(){
     container *ct = exp.front();
     Operation *op = (Operation*)ct->obj;
-    bool t = op->printLogicalOperation("then","else",false);
+    string idlb = to_string(idLabel);
+    string labelTrue = "then"+idlb;
+    string labelFalse = "else"+idlb;
+    string labelEnd = "fimIf"+idlb;
+    bool t = op->printLogicalOperation(labelTrue,labelFalse,false);
     // se não for AND 
     if(!t){
-        cout<<"\tj else"<<endl;
+        cout<<"\tj "<<labelFalse<<endl;
     }
-    cout<<"then:"<<endl;
-    cout<<"\tj fim"<<endl;
-    cout<<"else:"<<endl;
-    cout<<"fim:"<<endl;
+    cout<<labelTrue<<":"<<endl;
+    // todo printar comandos
+    cout<<"\n\n...\n\n"<<endl;
+    cout<<"\tj "<<labelEnd<<endl;
+    cout<<labelFalse<<":"<<endl;
+    cout<<labelEnd<<":"<<endl;
     
 }
 //================ FOR =======================
@@ -358,7 +369,7 @@ void Return::print(){
 }
 //=============== SCANF ======================
 void Scanf::print(){
-    
+
     cout<<"\ttexto do scanf: "<<str<<endl;
     return;
 }
@@ -368,11 +379,63 @@ void Exit::print(){
 }
 //============== PRINTF ======================
 void Printf::print(){
-    cout<<"\ttexto do printf: "<<str<<endl;
+    cout<<"#PRINTF"<<endl;
+    int qtdPar = 0;
+    for(int i = 0 ; i < dataLabels.size(); i++){
+        string label = dataLabels.at(i);
+        if(label!=""){
+            cout<<"\tli $v0, 4"<<endl;
+            cout<<"\tla $a0, "<<label<<endl;
+            cout<<"\tsyscall"<<endl;
+        }else{
+            container* c = exp.at(qtdPar);
+            OpLeaf *opl;
+            if(c->type==OPLEAF){
+                opl = (OpLeaf*)c->obj;
+                if(opl->type == OP_VARIABLE){
+                    cout<<"\tli $v0, 1"<<endl;
+                    cout<<"\tadd $a0, $zero, $"<<rData->getReg(opl->valueId)<<endl;
+                    cout<<"\tsyscall"<<endl;
+                }else if (opl->type == OP_FUNCTION){
+                    
+                }
+            }
+            qtdPar++;
+        }
+
+    }
 }
 
 void Printf::printLabel(){
-    str = "Entre com um valor inteiro:";
+    int pos = 0;
+    string label = "printF"+to_string(idLabel);
+    // se a string for formatada:
+    if((pos = str.find("%d")) != string::npos){
+        string subst= str.substr(0,str.length()-1);//copia a string
+        subst = subst.erase(0,1);//apaga aspas no inicio
+        subst = subst.erase(subst.length());//apaga aspas no fim
+        int c = 0;
+        pos-=1;
+        while(true){
+            string s = subst.substr(0,pos);
+            // cout<<"\""<<s<<"\""<<endl;
+            // for(int i = 0 ; i < s.length();i++)cout<<" ";
+            // cout<<"^"<<endl;
+            cout<<"\t"<<label<<c<<": .asciiz \""<<s<<"\""<<endl;
+            subst.erase(0,pos+2);
+            dataLabels.push_back(label+to_string(c));
+            dataLabels.push_back("");
+            c++;
+            if((pos = subst.find("%d")) == string::npos){
+                    cout<<"\t"<<label<<c<<": .asciiz \""<<subst<<"\"\n"<<endl;
+                    dataLabels.push_back(label+to_string(c));
+                break;
+            }
+        }
+    }else{
+        cout<<"\t"<<label<<":  .asciiz "<<str<<endl;
+        dataLabels.push_back(label);
+    }
 
 }
 

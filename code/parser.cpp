@@ -22,7 +22,8 @@ Return* readReturn(std::string arg);
 Variable* readVariable();
 Printf* readPrintf(std::string arg);
 Scanf* readScanf(std::string arg);
-int FILEEND = 0;
+
+int FILEEND = 0, contPrintf = 0, contIf = 0, contDoWhile = 0, contWhile = 0, contFor = 0;
 std::string LINE;
 Program *AST;
 Function *CURRENTFUNCTION;
@@ -101,6 +102,41 @@ int getNum(std::string str) {
     return 999;
 }
 
+int getOpType(std::string str) {
+    if(str == "+") return OP_ADD;
+    if(str == "-") return OP_SUB;
+    if(str == "*") return OP_MUL;
+    if(str == "/") return OP_DIV;
+    if(str == "=") return OP_ASSIGN;
+    if(str == "&&") return LOGICAL_AND;
+    if(str == "||") return LOGICAL_OR;
+    if(str == ">") return GREATER_THAN;
+    if(str == "<") return LESS_THAN;
+    if(str == "==") return EQUAL;
+    if(str == "!=") return NOT_EQUAL;
+    if(str == "<=") return LESS_EQUAL;
+    if(str == ">=") return GREATER_EQUAL;
+  //if(str == "") return ;
+    return 999;
+}
+
+int getOpGroup(std::string str) {
+    if(str == "+") return ARITHMETICAL;
+    if(str == "-") return ARITHMETICAL;
+    if(str == "*") return ARITHMETICAL;
+    if(str == "/") return ARITHMETICAL;
+    if(str == "=") return ARITHMETICAL;
+    if(str == "&&") return LOGICAL;
+    if(str == "||") return LOGICAL;
+    if(str == ">") return LOGICAL;
+    if(str == "<") return LOGICAL;
+    if(str == "==") return LOGICAL;
+    if(str == "!=") return LOGICAL;
+    if(str == "<=") return LOGICAL;
+    if(str == ">=") return LOGICAL;
+  //if(str == "") return ;
+    return 999;
+}
 
 
 bool isNumber(std::string str) {
@@ -342,6 +378,7 @@ Function* readFunction() {
                     cont->type = PRINTF;
                     cont->obj = prt;
                     f->commands.push_back(cont);
+                    AST->printF.push_back(cont);
                     break;
                 case SCANF:
                     scf = readScanf(LINE);
@@ -364,7 +401,7 @@ Function* readFunction() {
         LINE = readInput();
     }
     CURRENTFUNCTION = NULL;
-
+    
     return f;
 }
 
@@ -385,6 +422,9 @@ If* readIf() {
     Return *r;
     std::vector<std::string> eThen, eElse, arg;
     int i = 0;
+
+    iff->idLabel = contIf;
+    contIf++;
     arg = splitComma(LINE);
     //read expression
     op = readOperation(arg[0]);
@@ -455,8 +495,10 @@ Operation* readOperation(std::string arg) {
     Function *f;
     std::vector<std::string> param = splitOperation(arg);
     std::string vname;
-    op->opType = getNum(param[0]);
-
+    op->opType = getOpType(param[0]); //TODO
+    op->opGroup = getOpGroup(param[0]);
+    cout << "optype: " << op->opType << " opgroup: " << op->opGroup << "\n";
+    
     switch(getNum(getObjType(param[1]))) {
         case OPERATION: 
             op2 = readOperation(param[1]);
@@ -507,22 +549,6 @@ Operation* readOperation(std::string arg) {
                 break;
         };
     }
-    
-    //verificar quantidade de filhos
-    //para cada filho, verificar o que é
-        //se operacao, chamada recursiva
-        // caso nao seja, verificar as tabelas de simbolo.
-            //se encontrado, adicionar com o tipo encontrado
-            //se nao for enconrtado, e um valor constante
-
-
-
-
-    //verificar cada filho
-    //criar as folhas
-    //adicionar ao objeto
-
-
     return op;
 }
 
@@ -616,8 +642,9 @@ Printf* readPrintf(std::string arg) {
     Operation *op;
     OpLeaf *opl;
     int i;
+    prt->idLabel = contPrintf;
+    contPrintf++;
     std::vector<std::string> param = splitOperation(arg);
-
     prt->str = param[1];
     for(i = 2; i < param.size(); i++) {
         switch (getNum(getObjType(param[i]))) {
