@@ -59,7 +59,7 @@ void printObj(container *c){
         case FOR: ((For*)c->obj)->print();
         case PRINTF: ((Printf*)c->obj)->print();
         case SCANF: ((Scanf*)c->obj)->print();
-        // case EXIT: ((Exit*)c->obj)->print();
+        case EXIT: ((Exit*)c->obj)->print();
         case RETURN: ((Return*)c->obj)->print();
 
 
@@ -68,8 +68,13 @@ void printObj(container *c){
 
 void Program::print(){
     
+    cout<<".data"<<"\t\t#rotulos e textos printf"<<endl;
     //todo printar os printf
-    cout<<".data"<<"\trotulos e textos printf"<<endl;
+    cout<<printF.size()<<endl;
+    for(int i = 0 ; i < printF.size() ; i++){
+        Printf  *pf = (Printf*)printF.at(i)->obj;
+        pf->printLabel();
+    }
     //todo printar os vetores
     cout<<".size"<<"\trotulos de vetores "<<endl;
     //printar a funcao;
@@ -82,6 +87,7 @@ void Program::print(){
 
 
 }
+//============== FUNCTION ====================
 
 void Function::print(){
     rData = new RegisterData();
@@ -116,7 +122,7 @@ void Function::printParam(){
         
     }
 }
-
+//============== OPERATION ===================
 OpLeaf* Operation::evalArithmeticLeaf(container *c){
     OpLeaf *leaf = (OpLeaf*)c->obj;
     Operation *op;
@@ -137,7 +143,6 @@ OpLeaf* Operation::evalArithmeticLeaf(container *c){
     }
     return leaf;
 }
-
 OpLeaf* Operation::evalLogicalLeaf(container *c,string labelTrue,string labelFalse,bool demorgan){
     OpLeaf *leaf;
     Operation *op;
@@ -162,7 +167,6 @@ OpLeaf* Operation::evalLogicalLeaf(container *c,string labelTrue,string labelFal
     }
     return leaf;
 }
-
 OpLeaf* Operation::print(){
     OpLeaf *leftLeaf,*rightLeaf;
     
@@ -199,7 +203,6 @@ OpLeaf* Operation::print(){
         rData->clearRegister(rightLeaf->regTemp);
     return op;
 }
-
 bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool demorgan){
     OpLeaf *leftLeaf,*rightLeaf;
     Operation *leftOp,*rightOp;
@@ -219,6 +222,8 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
     leftLeaf = evalLogicalLeaf(left,labelTrue,labelFalse,demorgan);
     rightLeaf = evalLogicalLeaf(right,labelTrue,labelFalse,demorgan);
     int r = rData->getNextRegister();
+    cout<<"if tipo: ";
+    descricao(opType);
     switch(opType){
         case GREATER_THAN:
             if(!demorgan){
@@ -280,7 +285,7 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
     rData->clearRegister(r);
     return demorgan;
 }
-
+//============== DO WHILE ====================
 void DoWhile::print(){
     Operation *op = (Operation*)condition->obj;
     string lblTrue = "do_while";
@@ -297,7 +302,7 @@ void DoWhile::print(){
     cout<<lblFalse<<endl;
     
 }
-
+//================ IF ========================
 void If::print(){
     container *ct = exp.front();
     Operation *op = (Operation*)ct->obj;
@@ -312,6 +317,7 @@ void If::print(){
     cout<<"fim:"<<endl;
     
 }
+//================ FOR =======================
 
 void For::print(){
     Operation *opInit = (Operation*)init->obj;
@@ -329,7 +335,7 @@ void For::print(){
     cout<<"\tj for"<<endl;
 
 }
-
+//=============== WHILE ======================
 void While::print(){
     Operation *op = (Operation*)condition->obj;
     string lblTrue = "end_while";
@@ -346,20 +352,29 @@ void While::print(){
     cout<<lblFalse<<endl;
     
 }
-
+//============== RETURN ======================
 void Return::print(){
+    return;
 }
-
-
-
+//=============== SCANF ======================
 void Scanf::print(){
+    cout<<"tipo do endereco: "<<address->type<<endl;
+    cout<<"texto do scanf: "<<str<<endl;
+    return;
 }
-
-
+//=============== Exit =======================
+void Exit::print(){
+    return;
+}
+//============== PRINTF ======================
 void Printf::print(){
+    cout<<"\tprintf: "<<str<<endl;
 }
 
+void Printf::printLabel(){
+    str = "Entre com um valor inteiro:";
 
+}
 
 
 

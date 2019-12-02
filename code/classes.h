@@ -146,8 +146,11 @@ class Printf {
     public:
         int objType = PRINTF;
         std::string str; //texto do printf
+        std::vector<std::string> dataLabels;
+        std::map<std::string,int> printLabels;
         std::vector<container*> exp; //lista de expressoes
         void print();
+        void printLabel();
 };
 
 class Scanf {
