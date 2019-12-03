@@ -1090,8 +1090,8 @@ Variable* readVariable() {
 
 int main() {
     readProgram();
-    /*cout<<"\n\n\n\n Código gerado: \n\n\n\n";
-    AST->print();*/
+    cout<<"\n\n\n\n Código gerado: \n\n\n\n";
+    AST->print();
     return 1;
 }
 

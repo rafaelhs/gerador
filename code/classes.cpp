@@ -220,6 +220,7 @@ OpLeaf* Operation::print(){
     return op;
 }
 bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool demorgan){
+    descricao(opType);
     OpLeaf *leftLeaf,*rightLeaf;
     Operation *leftOp,*rightOp;
 
@@ -237,13 +238,24 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
     leftLeaf = evalLogicalLeaf(left,labelTrue,labelFalse,demorgan);
     rightLeaf = evalLogicalLeaf(right,labelTrue,labelFalse,demorgan);
     int r = rData->getNextRegister();
-    descricao(opType);
+    // cout<<"voltou: ";
+    // descricao(opType);
+    if(opType==LOGICAL_AND || opType == LOGICAL_OR){
+        return demorgan;
+    }
     string r1 = leftLeaf->valueId;
+    cout<<"#AMIGO ESTOUAQUI:";
+    descricao(rightLeaf->type);
     if(leftLeaf->type !=OP_TEMPORARY)
         r1 = rData->getReg(leftLeaf->valueId);
+      else
+        r1 = "t" + r1;
     string r2 = rightLeaf->valueId;
     if(rightLeaf->type != OP_TEMPORARY)
         r2= rData->getReg(rightLeaf->valueId);
+      else
+        r2 = "t" + r2;
+
     switch(opType){
         case GREATER_THAN:
             if(!demorgan){
@@ -392,6 +404,7 @@ void If::print(){
         descricao(c->type);
         printObj(c);
     }
+    cout<<"\tj "<<labelEnd<<endl;
     cout<<labelFalse<<":"<<endl;
     if(els.size()>0){
         cout<<"\t#COMANDOS - ELSE - IF"<<idlb<<endl;
@@ -571,17 +584,17 @@ std::string RegisterData::getReg(string nome){
 }
 
 void RegisterData::clearRegister(int r){
-    cout<<"#desalocou registrador"<<endl;
+    // cout<<"#desalocou registrador"<<endl;
     tempRegisters[r]=false;
 }
 
 int RegisterData::getNextRegister(){
     int r;
-    cout<<"#alocou registrador";
+    // cout<<"#alocou registrador";
     for(r = 0; r<10;r++){
         if(!tempRegisters[r]){
             tempRegisters[r]=true;
-            cout<<r<<endl;
+            // cout<<r<<endl;
             return r;
         }        
     }
