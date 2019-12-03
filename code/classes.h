@@ -23,7 +23,7 @@ class container{
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
         int getObjType = OPLEAF;
-        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION,OP_TEMP
+        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION,OP_TEMPORARY
         int valueType; // char / int
         int regTemp;
         std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = id;
@@ -45,6 +45,8 @@ class Operation {
         OpLeaf* evalArithmeticLeaf(container *c);
         bool printLogicalOperation(string labelTrue,string labelFalse,bool demorgan);
         OpLeaf* evalLogicalLeaf(container *c,string labelTrue,string labelFalse,bool demorgan);
+        int verifyGroup();
+
 };
 
 class Program {

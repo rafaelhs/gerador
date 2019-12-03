@@ -1,0 +1,118 @@
+
+
+
+.data           #rotulos e textos printf
+        printF0:  .asciiz "Entre com um valor inteiro:"
+        printF10: .asciiz "O fatorial de "
+        printF11: .asciiz " eh: "
+        printF12: .asciiz "\n"
+
+.text   #codigo
+main:
+#n#alocou registrador0
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF0
+        syscall
+        #SCANF
+        addi $v0, $zero,5
+        syscall
+        add $t0, $v0 ,$zero
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF10
+        syscall
+        addi $v0, $zero, 1
+        add $a0, $zero, $t0
+        syscall
+        addi $v0, $zero, 4
+        la $a0, printF11
+        syscall
+        #EMPILHAR
+        addiu $sp, $sp, -4
+        sw $t0, 0($sp)
+        #PARAMETERS
+        add $a0, $t0, $zero
+        jal fatorial
+        #DESEMPILHAR
+        lw $t0, 0($sp)
+        addiu $sp, $sp, 4
+#alocou registrador1
+        add $t1, $v0, $zero
+        addi $v0, $zero, 1
+        add $a0, $zero, $t1
+#desalocou registrador
+        syscall
+#desalocou registrador
+        addi $v0, $zero, 4
+        la $a0, printF12
+        syscall
+        #RETURN
+        addi $v0, $zero, 0
+        jr $ra
+
+
+fatorial:
+#n#alocou registrador0
+        #PARAMETER
+        add $t0, $a0, $zero
+        #IF
+#alocou registrador1
+        addi $t1, $zero, 0
+#alocou registrador2
+        #LESS_EQUAL
+        slt $t2 ,$t1 ,$t0
+        beq $t2 ,$zero, then0
+#desalocou registrador
+#desalocou registrador
+        j else0
+then0:
+        #COMANDOS - THEN - IF0
+        #RETURN
+        addi $v0, $zero, 0
+        jr $ra
+else0:
+        j fimIf0
+fimIf0:
+        #IF
+#alocou registrador1
+        addi $t1, $zero, 1
+#alocou registrador2
+        #EQUAL
+        beq $t0,$t1, then1
+#desalocou registrador
+#desalocou registrador
+        j else1
+then1:
+        #COMANDOS - THEN - IF1
+        #RETURN
+        addi $v0, $zero, 1
+        jr $ra
+else1:
+        #COMANDOS - ELSE - IF1
+        #RETURN
+        #EMPILHAR
+        addiu $sp, $sp, -4
+        sw $t0, 0($sp)
+        #PARAMETERS
+#alocou registrador1
+        addi $t1, $zero, 1
+#alocou registrador2
+        sub $t2, $t0, $t1
+#desalocou registrador
+        add $a0, $t2, $zero
+#desalocou registrador
+        jal fatorial
+        #DESEMPILHAR
+        lw $t0, 0($sp)
+        addiu $sp, $sp, 4
+#alocou registrador1
+        add $t1, $v0, $zero
+#alocou registrador2
+        mul $t2, $t0, $t1
+#desalocou registrador
+        add $v0, $t2, $zero
+#desalocou registrador
+        jr $ra
+        j fimIf1
+fimIf1:
