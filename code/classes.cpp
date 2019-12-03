@@ -5,6 +5,7 @@
 using namespace std;
 
 RegisterData *rData;
+bool firstFunction;
 
 void descricao(int d){
     switch(d){
@@ -73,9 +74,11 @@ void Program::print(){
     // cout<<".size"<<"\trotulos de vetores "<<endl;
     //printar a funcao;
     cout<<".text\t#codigo"<<endl;
+    firstFunction = true;
     for(int i = functions.size()-1; i >= 0 ; i--){
         Function *f = (Function*)functions.at(i)->obj;
         f->print();
+        firstFunction = false;
     }
 
 
@@ -442,6 +445,11 @@ void While::print(){
 void Return::print(){
     Operation *op ;
     OpLeaf *opl;
+    if(firstFunction){
+        cout<<"addi $v0, $zero, 10"<<endl;
+        cout<<"syscall"<<endl;
+        return;
+    }
     if(exp->type == OPERATION){
         op = (Operation*)exp->obj;
         opl = (OpLeaf*)op->print();
