@@ -1,0 +1,63 @@
+read program
+read function
+read variable
+read variable
+read variable
+read printf
+read printf
+read scanf
+read operation
+read opleaf a
+read printf
+read scanf
+read operation
+read opleaf b
+read printf
+read scanf
+read operation
+read opleaf c
+read printf
+read if
+read operation
+read operation
+read operation
+read opleaf a
+read operation
+read opleaf b
+read opleaf c
+read operation
+read opleaf b
+read operation
+read opleaf a
+read opleaf c
+read operation
+read opleaf c
+read operation
+read opleaf a
+read opleaf b
+read if
+read operation
+read operation
+read opleaf a
+read opleaf b
+read operation
+read opleaf b
+read opleaf c
+read printf
+read if
+read operation
+read operation
+read operation
+read opleaf a
+read opleaf b
+read operation
+read opleaf a
+read opleaf c
+read operation
+read opleaf c
+read opleaf b
+read printf
+read printf
+read printf
+read return
+read opleaf 0

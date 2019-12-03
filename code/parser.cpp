@@ -401,7 +401,6 @@ While* readWhile(std::string str) {
     }
     commands = splitSemiCollon(arg[1]);
     for(i = 0; i < commands.size(); i++) {
-        cout << "wcommands: " << getObjType(commands[i]) << "\n";
         switch(getNum(getObjType(commands[i]))){
             case RETURN:
                 r = readReturn(commands[i]);
@@ -626,7 +625,6 @@ Function* readFunction() {
     LINE = readInput();
     while(LINE != "END_FUNCTION") {
          if(LINE != ""){
-            cout << "fline: " << LINE << " objType: " << getObjType(LINE) << "\n";
             switch(getNum(getObjType(LINE))) {
                 case PARAMETER:
                     p = readParameter();
@@ -1092,10 +1090,8 @@ Variable* readVariable() {
 
 int main() {
     readProgram();
-    //cout<<"\n\n\n\n Código gerado: \n\n\n\n";
-    //AST->print();
-
-    
+    /*cout<<"\n\n\n\n Código gerado: \n\n\n\n";
+    AST->print();*/
     return 1;
 }
 
