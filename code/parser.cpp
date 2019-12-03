@@ -15,7 +15,7 @@ std::vector<std::string> split(std::string str);
 void readProgram();
 Function* readFunction();
 Parameter* readParameter();
-If* readIf();
+If* readIf(std::string str);
 Operation* readOperation(std::string arg);
 OpLeaf* readOpLeaf(std::string arg);
 Return* readReturn(std::string arg);
@@ -92,10 +92,19 @@ int getNum(std::string str) {
     if(str == "SCANF") return SCANF;
     if(str == "EXIT") return EXIT;
     if(str == "RETURN") return RETURN;
-    if(str == "<=") return OPERATION; //TODO
-    if(str == "==") return OPERATION;
-    if(str == "*") return OPERATION;
+    if(str == "+") return OPERATION;
     if(str == "-") return OPERATION;
+    if(str == "*") return OPERATION;
+    if(str == "/") return OPERATION;
+    if(str == "=") return OPERATION;
+    if(str == "&&") return OPERATION;
+    if(str == "||") return OPERATION;
+    if(str == ">") return OPERATION;
+    if(str == "<") return OPERATION;
+    if(str == "==") return OPERATION;
+    if(str == "!=") return OPERATION;
+    if(str == "<=") return OPERATION;
+    if(str == ">=") return OPERATION;
     if(str == "&") return OPERATION;
   //if(str == "") return ;
 
@@ -116,6 +125,7 @@ int getOpType(std::string str) {
     if(str == "!=") return NOT_EQUAL;
     if(str == "<=") return LESS_EQUAL;
     if(str == ">=") return GREATER_EQUAL;
+    if(str == "&") return REF;
   //if(str == "") return ;
     return 999;
 }
@@ -126,6 +136,7 @@ int getOpGroup(std::string str) {
     if(str == "*") return ARITHMETICAL;
     if(str == "/") return ARITHMETICAL;
     if(str == "=") return ARITHMETICAL;
+    if(str == "&") return ARITHMETICAL;
     if(str == "&&") return LOGICAL;
     if(str == "||") return LOGICAL;
     if(str == ">") return LOGICAL;
@@ -366,7 +377,7 @@ Function* readFunction() {
                     f->symbTable[v->id] = cont;
                     break;
                 case IF:
-                    iff = readIf();
+                    iff = readIf(LINE);
                     cont = new container();
                     cont->type = IF;
                     cont->obj = iff;
@@ -414,18 +425,19 @@ Parameter* readParameter() {
     return p;
 }
 
-If* readIf() {
+If* readIf(std::string str) {
     cout << "read if\n";
-    If *iff = new If();
+    If *iff = new If(), *iff2;
     container *c;
     Operation *op;
     Return *r;
+    Printf *prt;
     std::vector<std::string> eThen, eElse, arg;
     int i = 0;
 
     iff->idLabel = contIf;
     contIf++;
-    arg = splitComma(LINE);
+    arg = splitComma(str);
     //read expression
     op = readOperation(arg[0]);
     c = new container();
@@ -452,8 +464,22 @@ If* readIf() {
                 c->obj = op;
                 iff->then.push_back(c);
                 break;
+            case IF:
+                iff2 = readIf(eThen[i]);
+                c = new container();
+                c->type = IF;
+                c->obj = iff2;
+                iff->then.push_back(c);
+                break;
+            case PRINTF:
+                prt = readPrintf(eThen[i]);
+                c = new container();
+                c->type = PRINTF;
+                c->obj = prt;
+                iff->then.push_back(c);
+                AST->printF.push_back(c);
+                break;
             default:
-
                 break;
         }
     }
@@ -478,6 +504,21 @@ If* readIf() {
                     c->obj = op;
                     iff->els.push_back(c);
                     break;
+                case IF:
+                    iff2 = readIf(eElse[i]);
+                    c = new container();
+                    c->type = IF;
+                    c->obj = iff2;
+                    iff->els.push_back(c);
+                    break;
+                case PRINTF:
+                    prt = readPrintf(eElse[i]);
+                    c = new container();
+                    c->type = PRINTF;
+                    c->obj = prt;
+                    iff->els.push_back(c);
+                    AST->printF.push_back(c);
+                    break;
                 default:
                     break;
             }
@@ -497,7 +538,6 @@ Operation* readOperation(std::string arg) {
     std::string vname;
     op->opType = getOpType(param[0]); //TODO
     op->opGroup = getOpGroup(param[0]);
-    cout << "optype: " << op->opType << " opgroup: " << op->opGroup << "\n";
     
     switch(getNum(getObjType(param[1]))) {
         case OPERATION: 
@@ -701,21 +741,25 @@ Scanf* readScanf(std::string arg) {
 Return* readReturn(std::string arg) {
     cout << "read return\n";
     Return *r = new Return();
+    Operation *op;
+    OpLeaf *opl;
+    container *c;
     std::vector<std::string> v = splitOperation(arg), vleaf;
     std::string param;
     if(v.size() > 1){
         param = splitOperation(arg)[1];
         if(getNum(getObjType(param)) == OPERATION) {
-            Operation *op = readOperation(param);
-            container *c = new container();
+            op = readOperation(param);
+            c = new container();
             c->type = OPERATION;
             c->obj = op;
             r->exp = c;
         }else {
-            vleaf = splitOperation(param);
-            for(int i = 0; i < vleaf.size(); i++) {
-            }
-            //readopleaf
+            opl = readOpLeaf(param);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            r->exp = c;
         }
     }
     return r;
@@ -732,7 +776,7 @@ Variable* readVariable() {
 
 int main() {
     readProgram();
-    cout<<"\n\n\n\n Código gerado: \n\n\n\n";
-    AST->print();
+    //cout<<"\n\n\n\n Código gerado: \n\n\n\n";
+    //AST->print();
     return 1;
 }
