@@ -168,7 +168,7 @@ OpLeaf* Operation::evalLogicalLeaf(container *c,string labelTrue,string labelFal
             leaf->regTemp = r;
             leaf->type = OP_TEMPORARY;
             leaf->valueType = INT;
-            leaf->valueId = "t"+to_string(r);
+            leaf->valueId = to_string(r);
         }         
     }else{
         op = (Operation*)c->obj;
