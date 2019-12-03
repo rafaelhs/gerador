@@ -6,7 +6,6 @@ using namespace std;
 
 RegisterData *rData;
 bool firstFunction;
-
 void descricao(int d){
     switch(d){
         case PROGRAM: cout<<"\t#PROGRAM"<<endl;        return;
@@ -500,12 +499,20 @@ void Exit::print(){
 //============== PRINTF ======================
 void Printf::print(){
     int qtdPar = 0;
+    int soma = soma;
+    int j = 0;
     for(int i = 0 ; i < dataLabels.size(); i++){
         string label = dataLabels.at(i);
         if(label!=""){
             cout<<"\taddi $v0, $zero, 4"<<endl;
+            // cout<<"lui $1, 4097"<<endl;
+            // cout<<"ori $a0,$1,"<<soma<<endl;
+            // if(j == 0)
+            //     soma--;
+            // soma+= labelValues.at(j).length() - 2;
             cout<<"\tla $a0, "<<label<<endl;
             cout<<"\tsyscall"<<endl;
+            j++;
         }else{
             container* c = exp.at(qtdPar);
             OpLeaf *opl;
@@ -550,18 +557,21 @@ void Printf::printLabel(){
             // for(int i = 0 ; i < s.length();i++)cout<<" ";
             // cout<<"^"<<endl;
             cout<<"\t"<<label<<c<<": .asciiz \""<<s<<"\""<<endl;
+            labelValues.push_back(s);
             subst.erase(0,pos+2);
             dataLabels.push_back(label+to_string(c));
             dataLabels.push_back("");
             c++;
             if((pos = subst.find("%d")) == string::npos){
                     cout<<"\t"<<label<<c<<": .asciiz \""<<subst<<"\"\n"<<endl;
+                    labelValues.push_back(subst);
                     dataLabels.push_back(label+to_string(c));
                 break;
             }
         }
     }else{
         cout<<"\t"<<label<<":  .asciiz "<<str<<endl;
+        labelValues.push_back(str);
         dataLabels.push_back(label);
     }
 

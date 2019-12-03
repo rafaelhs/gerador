@@ -159,6 +159,7 @@ class Printf {
         int idLabel; //identificador
         std::string str; //texto do printf
         std::vector<std::string> dataLabels;
+        std::vector<std::string> labelValues;
         std::vector<container*> exp; //lista de expressoes
         void print();
         void printLabel();
