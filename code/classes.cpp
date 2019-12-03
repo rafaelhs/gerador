@@ -99,6 +99,7 @@ void Function::print(){
     printParam();
     for(int i = 0 ; i < commands.size() ; i++ ){
         container *c = commands.at(i);
+        descricao(c->type);
         printObj(c);
     }
     cout<<"\n\n";
@@ -135,6 +136,11 @@ OpLeaf* Operation::evalArithmeticLeaf(container *c){
             r= rData->getNextRegister();
             cout<<"\taddi $t"<<r<<", $zero, "<<leaf->valueId<<std::endl;
             leaf->regTemp = r;
+            leaf->type = OP_TEMPORARY;
+            leaf->valueType = INT;
+            leaf->valueId = "t"+to_string(r);
+        }else if(leaf->type == OP_FUNCTION){
+            leaf->printFunction();
             leaf->type = OP_TEMPORARY;
             leaf->valueType = INT;
             leaf->valueId = "t"+to_string(r);
@@ -291,13 +297,14 @@ bool Operation::printLogicalOperation(string labelTrue,string labelFalse,bool de
 //================ OpLeaf ========================
 OpLeaf* OpLeaf::printFunction(){
     OpLeaf * op =  new OpLeaf();
-    op->valueId="n";
     rData->stackUp();
     printParameters();
+    op->type = OP_TEMPORARY;
     cout<<"jal "<<valueId<<endl;
     rData->unstack();
     op->regTemp = rData->getNextRegister();
     cout<<"add $t"<<op->regTemp<<", $v0, $zero"<<endl;
+    op->valueId = to_string(op->regTemp);
     return op;
 }
 void OpLeaf::printParameters(){
@@ -400,30 +407,38 @@ void While::print(){
 }
 //============== RETURN ======================
 void Return::print(){
-    cout<<exp<<endl;
-    Operation *op ;
-    OpLeaf *opl;
-    descricao(exp->type);
-    if(exp->type == OPERATION){
-        op = (Operation*)exp->obj;
-        opl = (OpLeaf*)op->print();
-        cout<<"add $v0, $t"<<opl->valueId<<", $zero"<<endl;
-        rData->clearRegister(opl->regTemp);
-    }else if( exp->type == OPLEAF){
-        opl = (OpLeaf*) exp->obj;
-        if(opl->type == CONSTANT){
-            cout<<"addi $v0, $zero"<<", $"<<opl->valueId<<endl;
-        }else if(opl->type == VARIABLE){
-            cout<<"add $v0, $"<<rData->getReg(opl->valueId)<<", $zero"<<endl;
-        }
-    }
     return;
+    // Operation *op ;
+    // OpLeaf *opl;
+    // descricao(exp->type);
+    // if(exp->type == OPERATION){
+    //     op = (Operation*)exp->obj;
+    //     opl = (OpLeaf*)op->print();
+    //     cout<<"add $v0, $t"<<opl->valueId<<", $zero"<<endl;
+    //     rData->clearRegister(opl->regTemp);
+    // }else if( exp->type == OPLEAF){
+    //     opl = (OpLeaf*) exp->obj;
+    //     if(opl->type == CONSTANT){
+    //         cout<<"addi $v0, $zero"<<", $"<<opl->valueId<<endl;
+    //     }else if(opl->type == VARIABLE){
+    //         cout<<"add $v0, $"<<rData->getReg(opl->valueId)<<", $zero"<<endl;
+    //     }
+    // }
+    // return;
 }
 //=============== SCANF ======================
 void Scanf::print(){
-
-    cout<<"\ttexto do scanf: "<<str<<endl;
-    return;
+    descricao(address->type);
+     if(str.find("%d") != string::npos){
+         cout<<"addi $v0, $zero,5"<<endl;;
+         cout<<"syscall"<<endl;
+     }else if(str.find("%c") != string::npos) {
+        cout<<"addi $v0, $zero,12"<<endl;;
+        cout<<"syscall"<<endl;
+     }
+    OpLeaf *opl = ((OpLeaf*)((Operation*)address->obj)->left->obj);
+    cout<<"add $"<<rData->getReg(opl->valueId)<<", $v0 ,$zero"<<endl;
+        return;
 }
 //=============== Exit =======================
 void Exit::print(){
@@ -431,7 +446,6 @@ void Exit::print(){
 }
 //============== PRINTF ======================
 void Printf::print(){
-    cout<<"#PRINTF"<<endl;
     int qtdPar = 0;
     for(int i = 0 ; i < dataLabels.size(); i++){
         string label = dataLabels.at(i);
@@ -451,7 +465,13 @@ void Printf::print(){
                 }else if (opl->type == OP_FUNCTION){
                     opl = opl->printFunction();
                     cout<<"\taddi $v0, $zero, 1"<<endl;
-                    cout<<"\tadd $a0, $zero, $"<<rData->getReg(opl->valueId)<<endl;
+                    if(opl->type == OP_TEMPORARY){
+                        cout<<"\tadd $a0, $zero, $t"<<opl->valueId<<endl;
+                        rData->clearRegister(opl->regTemp);
+                    }else{
+                        cout<<opl->valueId<<endl;
+                        cout<<"\tadd $a0, $zero, $"<<rData->getReg(opl->valueId)<<endl;
+                    }
                     cout<<"\tsyscall"<<endl;
                     rData->clearRegister(opl->regTemp);
                 }
