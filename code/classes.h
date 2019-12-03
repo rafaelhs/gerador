@@ -30,6 +30,7 @@ class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
         std::vector<container*> values; //parametros de funcao ou indice de acesso de array
         OpLeaf* printFunction();
         void printParameters();
+        OpLeaf* printArray();
 
 };
 
@@ -58,6 +59,7 @@ class Program {
         std::vector<container*> functions; //lista de funcoes
         void print();
         void printPrintf();
+        void printVectors();
 };
 
 class Constant {

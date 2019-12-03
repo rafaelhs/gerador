@@ -393,7 +393,7 @@ std:: vector<std::string> splitOperation(std::string str) {
 }
 
 void readProgram() {
-    cout << "read program\n";
+    // cout << "read program\n";
     container *cont;
     Constant *c;
     GlobalVariable *gv;
@@ -441,7 +441,7 @@ void readProgram() {
 
 
 Constant* readConstant(std::string arg) {
-    cout << "read constant\n";
+    // cout << "read constant\n";
     Constant *cnst = new Constant();    
     std::vector<std::string> splitLine = split(arg);
     cnst->id = splitLine[1];
@@ -450,7 +450,7 @@ Constant* readConstant(std::string arg) {
 }
 
 GlobalVariable* readGlobalVariable(std::string arg) {
-    cout << "read global variable\n";
+    // cout << "read global variable\n";
     GlobalVariable *gv = new GlobalVariable();
     std::vector<std::string> splitLine = split(arg), arrSplit;
     gv->id = splitLine[2];
@@ -468,7 +468,7 @@ GlobalVariable* readGlobalVariable(std::string arg) {
 
 
 While* readWhile(std::string str) {
-    cout << "read while\n";
+    // cout << "read while\n";
     While *w = new While(), *w2;
     DoWhile *dw;
     Operation *op;
@@ -581,7 +581,7 @@ While* readWhile(std::string str) {
     
 
 DoWhile* readDoWhile(std::string str) {
-    cout << "read dowhile\n";
+    // cout << "read dowhile\n";
     DoWhile *dw = new DoWhile(), *dw2;
     While *w;
     Operation *op;
@@ -692,7 +692,7 @@ DoWhile* readDoWhile(std::string str) {
 }
 
 For* readFor(std::string str) {
-    cout << "read for\n";
+    // cout << "read for\n";
     For *fr = new For(), *fr2;
     DoWhile *dw;
     While *w;
@@ -844,7 +844,7 @@ For* readFor(std::string str) {
 
 
 Function* readFunction() {
-    cout << "read function\n";
+    // cout << "read function\n";
     container *cont;
     Function *f = new Function();
     Parameter *p;   
@@ -971,7 +971,7 @@ Function* readFunction() {
 
 
 Parameter* readParameter() {
-    cout << "read parameter\n";
+    // cout << "read parameter\n";
     Parameter *p = new Parameter();
     std::vector<std::string> splitLine = split(LINE);
     p->id = splitLine[1];
@@ -980,7 +980,7 @@ Parameter* readParameter() {
 }
 
 If* readIf(std::string str) {
-    cout << "read if\n";
+    // cout << "read if\n";
     If *iff = new If(), *iff2;
     container *c;
     Operation *op;
@@ -1092,7 +1092,7 @@ If* readIf(std::string str) {
 }
 
 Operation* readOperation(std::string arg) {
-    cout << "read operation\n";
+    // cout << "read operation\n";
     Operation *op = new Operation, *op2;
     OpLeaf *opl;
     container *c;
@@ -1158,7 +1158,7 @@ Operation* readOperation(std::string arg) {
 
 
 OpLeaf* readOpLeaf(std::string arg) {
-    cout << "read opleaf " << arg << "\n";
+    // cout << "read opleaf " << arg << "\n";
     OpLeaf *opl = new OpLeaf(), *opl2;
     Operation *op;
     Variable *v;
@@ -1185,7 +1185,7 @@ OpLeaf* readOpLeaf(std::string arg) {
     } else { //encontraddo em alguma das tabelas
         switch(c->type){
             case CONSTANT:
-                cout << "!";
+                // cout << "!";
                 cnst = (Constant *)c->obj;
                 opl->type = OP_CONSTANT;
                 opl->valueType = INT;
@@ -1276,7 +1276,7 @@ OpLeaf* readOpLeaf(std::string arg) {
 }
 
 Printf* readPrintf(std::string arg) {
-    cout << "read printf\n";
+    // cout << "read printf\n";
     Printf *prt = new Printf();
     container *c;
     Operation *op;
@@ -1309,7 +1309,7 @@ Printf* readPrintf(std::string arg) {
 }
 
 Scanf* readScanf(std::string arg) {
-    cout << "read scanf\n";
+    // cout << "read scanf\n";
     Scanf *scf = new Scanf();
     container *c;
     Operation *op;
@@ -1338,7 +1338,7 @@ Scanf* readScanf(std::string arg) {
 }
 
 Return* readReturn(std::string arg) {
-    cout << "read return\n";
+    // cout << "read return\n";
     Return *r = new Return();
     Operation *op;
     OpLeaf *opl;
@@ -1365,7 +1365,7 @@ Return* readReturn(std::string arg) {
 }
 
 Variable* readVariable() {
-    cout << "read variable\n";
+    // cout << "read variable\n";
     Variable *v = new Variable();
     std::vector<std::string> splitLine = split(LINE);
     v->id = splitLine[1];
@@ -1375,8 +1375,8 @@ Variable* readVariable() {
 
 int main() {
     readProgram();
-    //cout<<"\n\n\n\n Código gerado: \n\n\n\n";
-    //AST->print();
+    // cout<<"\n\n\n\n Código gerado: \n\n\n\n";
+    AST->print();
     return 1;
 }
 
