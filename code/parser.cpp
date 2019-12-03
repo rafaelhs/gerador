@@ -13,7 +13,12 @@ int getNum(std::string str);
 std::vector<std::string> split(std::string str);
 
 void readProgram();
+Constant* readConstant(std::string arg);
+GlobalVariable* readGlobalVariable(std::string arg);
 Function* readFunction();
+While* readWhile(std::string str);
+DoWhile* readDoWhile(std::string str);
+For* readFor(std::string str);
 Parameter* readParameter();
 If* readIf(std::string str);
 Operation* readOperation(std::string arg);
@@ -27,7 +32,6 @@ int FILEEND = 0, contPrintf = 0, contIf = 0, contDoWhile = 0, contWhile = 0, con
 std::string LINE;
 Program *AST;
 Function *CURRENTFUNCTION;
-
 
 
 std::string readInput() {
@@ -54,7 +58,7 @@ std::string getObjType(std::string line) {
     char c = ' ';
     std::string str = "";
     c = line.at(0);
-    while(!(c >= 65 && c <= 90) && !(c >= 97 && c <= 122) && !(c >= '0' && c <= '9') &&  
+    while(!(c >= 65 && c <= 90) && !(c >= 97 && c <= 122) && !(c >= '0' && c <= '9') &&  c != '_' &&
             c != '+' && c != '-' && c != '*' && c != '/' && c != '%' && c != '&' && c != '|' && 
             c != '^' && c != '=' && c != '!' && c != '<' && c != '>' && c != '-' && c != '~') {
         i++;
@@ -64,7 +68,7 @@ std::string getObjType(std::string line) {
         c = line.at(i);
     }
     c = line.at(i);
-    while((c >= 65 && c <= 90) || (c >= 97 && c <= 122) && !(c >= '0' && c <= '9') ||  
+    while((c >= 65 && c <= 90) || (c >= 97 && c <= 122) && !(c >= '0' && c <= '9') ||  c == '_' ||
             c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '&' || c == '|' || 
             c == '^' || c == '=' || c == '!' || c == '<' || c == '>' || c == '-' || c == '~'){
         str.append(1, c);
@@ -80,11 +84,11 @@ std::string getObjType(std::string line) {
 int getNum(std::string str) {
     if(str == "AST") return PROGRAM;
     if(str == "CONSTANT") return CONSTANT;
-    if(str == "GLOBALVARIABLE") return GLOBALVARIABLE;
+    if(str == "GLOBAL") return GLOBALVARIABLE;
     if(str == "FUNCTION") return FUNCTION;
     if(str == "PARAMETER") return PARAMETER;
     if(str == "VARIABLE") return VARIABLE;
-    if(str == "DOWHILE") return DOWHILE;
+    if(str == "DO_WHILE") return DOWHILE;
     if(str == "IF") return IF;
     if(str == "WHILE") return WHILE;
     if(str == "FOR") return FOR;
@@ -246,10 +250,6 @@ std::vector<std::string> splitSemiCollon(std::string str) {
     return tokens;
 }
 
-std::vector<std::string> splitAmpersand(std::string str) {
-    return vector<string>();
-}
-
 std:: vector<std::string> splitOperation(std::string str) {
     std::string s = "";
     std::vector<std::string> tokens;
@@ -321,6 +321,20 @@ void readProgram() {
                     cont->obj = f;
                     AST->functions.push_back(cont);
                     break;
+                case CONSTANT:
+                    c = readConstant(LINE);
+                    cont = new container();
+                    cont->type = CONSTANT;
+                    cont->obj = f;
+                    AST->symbTable[c->id] = cont;
+                    break;
+                case GLOBALVARIABLE:
+                    gv = readGlobalVariable(LINE);
+                    cont = new container();
+                    cont->type = GLOBALVARIABLE;
+                    cont->obj = gv;
+                    AST->symbTable[gv->id] = cont;
+                    break;
                 default:
                     break;
             }
@@ -333,6 +347,254 @@ void readProgram() {
     //read functions    
 }
 
+
+Constant* readConstant(std::string arg) {
+    cout << "read constant\n";
+    Constant *cnst = new Constant();    
+    std::vector<std::string> splitLine = split(arg);
+    cnst->id = splitLine[1];
+    cnst->value = splitLine[3];
+    return cnst;
+}
+
+GlobalVariable* readGlobalVariable(std::string arg) {
+    cout << "read global variable\n";
+    GlobalVariable *gv = new GlobalVariable();
+    std::vector<std::string> splitLine = split(arg);
+    gv->id = splitLine[2];
+    gv->type = splitLine[4];
+    return gv;
+}
+
+
+While* readWhile(std::string str) {
+    cout << "read while\n";
+    While *w = new While(), *w2;
+    DoWhile *dw;
+    Operation *op;
+    OpLeaf *opl;
+    container *c;
+    Return *r;
+    If *iff;
+    Printf *prt;
+    Scanf *scf;
+    For* fr;
+    int i;
+    std::vector<std::string> arg, commands;
+
+
+    w->idLabel = contWhile;
+    contWhile++;
+    arg = splitComma(str);
+    //conditions
+    //command list
+    if(getNum(getObjType(arg[0])) == OPERATION) {//operacao
+        op = readOperation(arg[0]);
+        c = new container();
+        c->type = OPERATION;
+        c->obj = op;
+    }else{//opleaf
+        opl = readOpLeaf(arg[0]);
+        c = new container();
+        c->type = OPLEAF;
+        c->obj = opl;
+    }
+    commands = splitSemiCollon(arg[1]);
+    for(i = 0; i < commands.size(); i++) {
+        cout << "wcommands: " << getObjType(commands[i]) << "\n";
+        switch(getNum(getObjType(commands[i]))){
+            case RETURN:
+                r = readReturn(commands[i]);
+                c = new container();
+                c->type = RETURN;
+                c->obj = r;
+                w->commands.push_back(c);
+                break;
+            case OPERATION:
+                op = readOperation(commands[i]);
+                c = new container();
+                c->type = OPERATION;
+                c->obj = op;
+                w->commands.push_back(c);
+                break;
+            case IF:
+                iff = readIf(commands[i]);
+                c = new container();
+                c->type = IF;
+                c->obj = iff;
+                w->commands.push_back(c);
+                break;
+            case WHILE:
+                w2 = readWhile(commands[i]);
+                c = new container();
+                c->type = WHILE;
+                c->obj = w2;
+                w->commands.push_back(c);
+                break;
+            case DOWHILE:
+                dw = readDoWhile(commands[i]);
+                c = new container();
+                c->type = DOWHILE;
+                c->obj = dw;
+                w->commands.push_back(c);
+                break;
+            case FOR:
+                fr = readFor(commands[i]);
+                c = new container();
+                c->type = FOR;
+                c->obj = fr;
+                w->commands.push_back(c);
+                break;
+            case PRINTF:
+                prt = readPrintf(commands[i]);
+                c = new container();
+                c->type = PRINTF;
+                c->obj = prt;
+                w->commands.push_back(c);
+                AST->printF.push_back(c);
+                break;
+            case SCANF:
+                scf = readScanf(commands[i]);
+                c = new container();
+                c->type = SCANF;
+                c->obj = scf;
+                w->commands.push_back(c);
+                break;
+            default: 
+                if(AST->symbTable[getObjType(commands[i])] != NULL) { //encontrado na tabela de simbolos
+                    if(AST->symbTable[getObjType(commands[i])]->type = FUNCTION){ //chamada de funcao encontrada
+                        opl = readOpLeaf(commands[i]);
+                        c = new container();
+                        c->type = OPLEAF;
+                        c->obj = opl;
+                        w->commands.push_back(c);
+                    }
+                }
+                break;
+        }
+    }
+    return w;
+}
+
+
+    
+
+DoWhile* readDoWhile(std::string str) {
+    cout << "read dowhile\n";
+    DoWhile *dw = new DoWhile(), *dw2;
+    While *w;
+    Operation *op;
+    OpLeaf *opl;
+    container *c;
+    Return *r;
+    If *iff;
+    Printf *prt;
+    Scanf *scf;
+    For* fr;
+    int i;
+    std::vector<std::string> arg, commands;
+
+
+    dw->idLabel = contDoWhile;
+    contDoWhile++;
+    arg = splitComma(str);
+    //conditions
+    //command list
+    if(getNum(getObjType(arg[1])) == OPERATION) {//operacao
+        op = readOperation(arg[1]);
+        c = new container();
+        c->type = OPERATION;
+        c->obj = op;
+    }else{//opleaf
+        opl = readOpLeaf(arg[1]);
+        c = new container();
+        c->type = OPLEAF;
+        c->obj = opl;
+    }
+
+    commands = splitSemiCollon(arg[0]);
+    for(i = 0; i < commands.size(); i++) {
+        switch(getNum(getObjType(commands[i]))){
+            case RETURN:
+                r = readReturn(commands[i]);
+                c = new container();
+                c->type = RETURN;
+                c->obj = r;
+                dw->commands.push_back(c);
+                break;
+            case OPERATION:
+                op = readOperation(commands[i]);
+                c = new container();
+                c->type = OPERATION;
+                c->obj = op;
+                dw->commands.push_back(c);
+                break;
+            case IF:
+                iff = readIf(commands[i]);
+                c = new container();
+                c->type = IF;
+                c->obj = iff;
+                dw->commands.push_back(c);
+                break;
+            case WHILE:
+                w = readWhile(commands[i]);
+                c = new container();
+                c->type = WHILE;
+                c->obj = w;
+                dw->commands.push_back(c);
+                break;
+            case DOWHILE:
+                dw2 = readDoWhile(commands[i]);
+                c = new container();
+                c->type = DOWHILE;
+                c->obj = dw2;
+                dw->commands.push_back(c);
+                break;
+            case FOR:
+                fr = readFor(commands[i]);
+                c = new container();
+                c->type = FOR;
+                c->obj = fr;
+                dw->commands.push_back(c);
+                break;
+            case PRINTF:
+                prt = readPrintf(commands[i]);
+                c = new container();
+                c->type = PRINTF;
+                c->obj = prt;
+                dw->commands.push_back(c);
+                AST->printF.push_back(c);
+                break;
+            case SCANF:
+                scf = readScanf(commands[i]);
+                c = new container();
+                c->type = SCANF;
+                c->obj = scf;
+                dw->commands.push_back(c);
+                break;
+            default: 
+                if(AST->symbTable[getObjType(commands[i])] != NULL) { //encontrado na tabela de simbolos
+                    if(AST->symbTable[getObjType(commands[i])]->type = FUNCTION){ //chamada de funcao encontrada
+                        opl = readOpLeaf(commands[i]);
+                        c = new container();
+                        c->type = OPLEAF;
+                        c->obj = opl;
+                        dw->commands.push_back(c);
+                    }
+                }
+                break;
+        }
+    }
+    return dw;
+}
+
+For* readFor(std::string str) {
+    //TODO
+
+}
+
+
+
 Function* readFunction() {
     cout << "read function\n";
     container *cont;
@@ -343,9 +605,13 @@ Function* readFunction() {
     Return *r;
     Printf *prt;
     Scanf *scf;
+    Operation *op;
+    OpLeaf *opl;
+    While *w;
+    DoWhile *dw;
+    For *fr;
     CURRENTFUNCTION = f;
     f->id = split(LINE)[1];  //function id
-    std::cout<<f->id<<endl;
 
     LINE = readInput();
     f->return_type = split(LINE)[1]; // function return type
@@ -360,6 +626,7 @@ Function* readFunction() {
     LINE = readInput();
     while(LINE != "END_FUNCTION") {
          if(LINE != ""){
+            cout << "fline: " << LINE << " objType: " << getObjType(LINE) << "\n";
             switch(getNum(getObjType(LINE))) {
                 case PARAMETER:
                     p = readParameter();
@@ -376,11 +643,39 @@ Function* readFunction() {
                     cont->obj = v;
                     f->symbTable[v->id] = cont;
                     break;
+                case OPERATION:
+                    op = readOperation(LINE);
+                    cont = new container();
+                    cont->type = OPERATION;
+                    cont->obj = op;
+                    f->commands.push_back(cont);
+                    break;
                 case IF:
                     iff = readIf(LINE);
                     cont = new container();
                     cont->type = IF;
                     cont->obj = iff;
+                    f->commands.push_back(cont);
+                    break;
+                case WHILE:
+                    w = readWhile(LINE);
+                    cont = new container();
+                    cont->type = WHILE;
+                    cont->obj = w;
+                    f->commands.push_back(cont);
+                    break;
+                case DOWHILE:
+                    dw = readDoWhile(LINE);
+                    cont = new container();
+                    cont->type = DOWHILE;
+                    cont->obj = dw;
+                    f->commands.push_back(cont);
+                    break;
+                case FOR:
+                    fr = readFor(LINE);
+                    cont = new container();
+                    cont->type = FOR;
+                    cont->obj = fr;
                     f->commands.push_back(cont);
                     break;
                 case PRINTF:
@@ -405,7 +700,16 @@ Function* readFunction() {
                     cont->obj = r;
                     f->commands.push_back(cont);
                     break;
-                default:
+                default: 
+                    if(AST->symbTable[getObjType(LINE)] != NULL) { //encontrado na tabela de simbolos
+                        if(AST->symbTable[getObjType(LINE)]->type = FUNCTION){ //chamada de funcao encontrada
+                            opl = readOpLeaf(LINE);
+                            cont = new container();
+                            cont->type = OPLEAF;
+                            cont->obj = opl;
+                            w->commands.push_back(cont);
+                        }
+                    }
                     break;
             }
          }
@@ -415,6 +719,9 @@ Function* readFunction() {
     
     return f;
 }
+
+
+
 
 Parameter* readParameter() {
     cout << "read parameter\n";
@@ -430,6 +737,7 @@ If* readIf(std::string str) {
     If *iff = new If(), *iff2;
     container *c;
     Operation *op;
+    OpLeaf *opl;
     Return *r;
     Printf *prt;
     std::vector<std::string> eThen, eElse, arg;
@@ -439,11 +747,20 @@ If* readIf(std::string str) {
     contIf++;
     arg = splitComma(str);
     //read expression
-    op = readOperation(arg[0]);
-    c = new container();
-    c->type = OPERATION;
-    c->obj = op;
-    iff->exp.push_back(c);
+    if(getNum(getObjType(arg[0])) == OPERATION) {
+        op = readOperation(arg[0]);
+        c = new container();
+        c->type = OPERATION;
+        c->obj = op;
+        iff->exp.push_back(c);
+    }else{
+        opl = readOpLeaf(arg[0]);
+        c = new container();
+        c->type = OPLEAF;
+        c->obj = opl;
+        iff->exp.push_back(c);
+    }
+    
 
     //read all exp from then
 
@@ -536,7 +853,7 @@ Operation* readOperation(std::string arg) {
     Function *f;
     std::vector<std::string> param = splitOperation(arg);
     std::string vname;
-    op->opType = getOpType(param[0]); //TODO
+    op->opType = getOpType(param[0]); 
     op->opGroup = getOpGroup(param[0]);
     
     switch(getNum(getObjType(param[1]))) {
@@ -594,7 +911,7 @@ Operation* readOperation(std::string arg) {
 
 
 OpLeaf* readOpLeaf(std::string arg) {
-    cout << "read opleaf\n";
+    cout << "read opleaf " << arg << "\n";
     OpLeaf *opl = new OpLeaf(), *opl2;
     Operation *op;
     Variable *v;
@@ -604,7 +921,7 @@ OpLeaf* readOpLeaf(std::string arg) {
     Function *f;
     std::vector<std::string> param;
     int i;
-
+    
     vname = splitOperation(arg)[0];
     c = AST->symbTable[vname]; //procura na global
     if(c == NULL) { //caso nao encontrar
@@ -715,7 +1032,6 @@ Scanf* readScanf(std::string arg) {
     Operation *op;
     OpLeaf *opl;
     std::vector<std::string> param = splitOperation(arg);
-        cout<<"buga buga\n\n\n"<<param[1]<<"-"<<param[2]<<"\n\n\n\nbuga buga\n";
 
     scf->str = param[1];
     switch (getNum(getObjType(param[2]))) {
@@ -778,5 +1094,16 @@ int main() {
     readProgram();
     //cout<<"\n\n\n\n Código gerado: \n\n\n\n";
     //AST->print();
+
+    
     return 1;
 }
+
+/**
+ * constants
+ * global variables
+ * operations in functions
+ * while
+ * do while
+ * for
+ */
