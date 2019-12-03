@@ -10,7 +10,7 @@ using namespace std;
 
 enum Obj{
         PROGRAM, CONSTANT, GLOBALVARIABLE, FUNCTION, PARAMETER, VARIABLE, DOWHILE, IF, WHILE, FOR, PRINTF, SCANF, EXIT, RETURN, OPERATION, OPRESULT, OPLEAF,
-        OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,OP_ASSIGN,INT,CHAR,LOGICAL_AND,LOGICAL_OR, GREATER_THAN,LESS_THAN,EQUAL,NOT_EQUAL,LESS_EQUAL,GREATER_EQUAL,REF,ARITHMETICAL,LOGICAL,OP_TEMPORARY
+        OP_ADD,OP_SUB,OP_MUL,OP_DIV,OP_VARIABLE,OP_CONSTANT,OP_FUNCTION,OP_ARRAY,OP_ASSIGN,INT,CHAR,LOGICAL_AND,LOGICAL_OR, GREATER_THAN,LESS_THAN,EQUAL,NOT_EQUAL,LESS_EQUAL,GREATER_EQUAL,REF,ARITHMETICAL,LOGICAL,OP_TEMPORARY
 };
 
 class container{
@@ -23,11 +23,11 @@ class container{
 class OpLeaf { //folha da arvore de operacoes, pode ser qualquer coisa
     public:
         int getObjType = OPLEAF;
-        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION,OP_TEMPORARY
+        int type; //OP_VARIABLE, OP_CONSTANT,OP_FUNCTION,OP_TEMPORARY, OP_ARRAY
         int valueType; // char / int
         int regTemp;
         std::string valueId; //caso variavel = id, caso constante = valor, caso funcao = id;
-        std::vector<container*> values;
+        std::vector<container*> values; //parametros de funcao ou indice de acesso de array
         OpLeaf* printFunction();
         void printParameters();
 
@@ -72,6 +72,8 @@ class GlobalVariable {
         int objType = GLOBALVARIABLE;
         std::string id; //identificador da variavel
         std::string type; //tipo da variavel
+        bool isArray; //se e vetor
+        int arraySize; //tamanho do vetor
 };
 
 class RegisterData{

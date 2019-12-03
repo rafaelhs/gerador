@@ -231,13 +231,26 @@ std::vector<std::string> splitSemiCollon(std::string str) {
     std::vector<std::string> tokens;
 
     char c;
-    int i = 0;
+    int i = 0, flag = 0;
 
     while(i < str.size()) {
         c = str.at(i);
         if(c == ';'){
             tokens.push_back(s);
             s = "";
+        } else if(c == '(') { //se encontra a abertura de parenteses continua copiando ate encontrar o fechamento
+            flag++;
+            while(flag > 0) {
+                s.append(1, c);
+                i++;
+                c = str.at(i);
+                if(c == ')') {
+                    flag--;
+                }else if(c == '(') {
+                    flag++;
+                }
+            }
+            s.append(1, c);
         } else {
             s.append(1, c);
         }
@@ -393,11 +406,13 @@ While* readWhile(std::string str) {
         c = new container();
         c->type = OPERATION;
         c->obj = op;
+        w->condition = c;
     }else{//opleaf
         opl = readOpLeaf(arg[0]);
         c = new container();
         c->type = OPLEAF;
         c->obj = opl;
+        w->condition = c;
     }
     commands = splitSemiCollon(arg[1]);
     for(i = 0; i < commands.size(); i++) {
@@ -504,11 +519,13 @@ DoWhile* readDoWhile(std::string str) {
         c = new container();
         c->type = OPERATION;
         c->obj = op;
+        dw->condition = c;
     }else{//opleaf
         opl = readOpLeaf(arg[1]);
         c = new container();
         c->type = OPLEAF;
         c->obj = opl;
+        dw->condition = c;
     }
 
     commands = splitSemiCollon(arg[0]);
@@ -588,9 +605,154 @@ DoWhile* readDoWhile(std::string str) {
 }
 
 For* readFor(std::string str) {
-    //TODO
+    cout << "read for\n";
+    For *fr = new For(), *fr2;
+    DoWhile *dw;
+    While *w;
+    Operation *op;
+    OpLeaf *opl;
+    container *c;
+    Return *r;
+    If *iff;
+    Printf *prt;
+    Scanf *scf;
+    int i;
+    std::vector<std::string> arg, commands;
 
-}
+    fr->idLabel = contFor;
+    contFor++;
+    
+    arg = splitComma(str);
+
+    //inicializacao
+    if(arg[0] != "") {
+        if(getNum(getObjType(arg[0])) == OPERATION) {//operacao
+            op = readOperation(arg[0]);
+            c = new container();
+            c->type = OPERATION;
+            c->obj = op;
+            fr->init = c;
+        }else{//opleaf
+            opl = readOpLeaf(arg[0]);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            fr->init = c;
+        }
+    }
+    
+
+    //condicao de parada
+    if(arg[1] != "") {
+        if(getNum(getObjType(arg[1])) == OPERATION) {//operacao
+            op = readOperation(arg[1]);
+            c = new container();
+            c->type = OPERATION;
+            c->obj = op;
+            fr->condition = c;
+        }else{//opleaf
+            opl = readOpLeaf(arg[1]);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            fr->condition = c;
+        }
+    }
+
+    //ajuste de valores
+    if(arg[2] != "") {
+        if(getNum(getObjType(arg[2])) == OPERATION) {//operacao
+            op = readOperation(arg[2]);
+            c = new container();
+            c->type = OPERATION;
+            c->obj = op;
+            fr->adjustment = c;
+        }else{//opleaf
+            opl = readOpLeaf(arg[2]);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            fr->adjustment = c;
+        }
+    }
+
+    //comandos
+
+    commands = splitSemiCollon(arg[3]);
+    for(i = 0; i < commands.size(); i++) {
+        switch(getNum(getObjType(commands[i]))){
+            case RETURN:
+                r = readReturn(commands[i]);
+                c = new container();
+                c->type = RETURN;
+                c->obj = r;
+                fr->commands.push_back(c);
+                break;
+            case OPERATION:
+                op = readOperation(commands[i]);
+                c = new container();
+                c->type = OPERATION;
+                c->obj = op;
+                fr->commands.push_back(c);
+                break;
+            case IF:
+                iff = readIf(commands[i]);
+                c = new container();
+                c->type = IF;
+                c->obj = iff;
+                fr->commands.push_back(c);
+                break;
+            case WHILE:
+                w = readWhile(commands[i]);
+                c = new container();
+                c->type = WHILE;
+                c->obj = w;
+                fr->commands.push_back(c);
+                break;
+            case DOWHILE:
+                dw = readDoWhile(commands[i]);
+                c = new container();
+                c->type = DOWHILE;
+                c->obj = dw;
+                fr->commands.push_back(c);
+                break;
+            case FOR:
+                fr2 = readFor(commands[i]);
+                c = new container();
+                c->type = FOR;
+                c->obj = fr2;
+                fr->commands.push_back(c);
+                break;
+            case PRINTF:
+                prt = readPrintf(commands[i]);
+                c = new container();
+                c->type = PRINTF;
+                c->obj = prt;
+                fr->commands.push_back(c);
+                AST->printF.push_back(c);
+                break;
+            case SCANF:
+                scf = readScanf(commands[i]);
+                c = new container();
+                c->type = SCANF;
+                c->obj = scf;
+                fr->commands.push_back(c);
+                break;
+            default: 
+                if(AST->symbTable[getObjType(commands[i])] != NULL) { //encontrado na tabela de simbolos
+                    if(AST->symbTable[getObjType(commands[i])]->type = FUNCTION){ //chamada de funcao encontrada
+                        opl = readOpLeaf(commands[i]);
+                        c = new container();
+                        c->type = OPLEAF;
+                        c->obj = opl;
+                        fr->commands.push_back(c);
+                    }
+                }
+                break;
+        }
+    }
+    return fr;
+}   
 
 
 
@@ -1092,14 +1254,9 @@ int main() {
     readProgram();
     /*cout<<"\n\n\n\n Código gerado: \n\n\n\n";
     AST->print();*/
+
+
     return 1;
 }
 
-/**
- * constants
- * global variables
- * operations in functions
- * while
- * do while
- * for
- */
+

@@ -1,63 +1,135 @@
 read program
+read constant
+read global variable
+read global variable
+read function
+read parameter
+read parameter
+read variable
+read variable
+read variable
+read variable
+read variable
+read if
+read operation
+read opleaf n
+read opleaf m
+read return
+read operation
+read opleaf i
+read operation
+read opleaf m
+read opleaf 1
+read operation
+read opleaf j
+read opleaf n
+read operation
+read opleaf v
+read opleaf a[n]
+read while
+read opleaf non_stop
+read dowhile
+read operation
+read opleaf a[i]
+read opleaf v
+read operation
+read opleaf i
+read operation
+read opleaf i
+read opleaf 1
+read dowhile
+read operation
+read opleaf a[j]
+read opleaf v
+read operation
+read opleaf j
+read operation
+read opleaf j
+read opleaf 1
+read if
+read operation
+read opleaf i
+read opleaf j
+read operation
+read opleaf non_stop
+read opleaf 0
+read operation
+read opleaf x
+read opleaf a[i]
+read operation
+read opleaf a[i]
+read opleaf a[j]
+read operation
+read opleaf a[j]
+read opleaf x
+read operation
+read opleaf x
+read opleaf a[i]
+read operation
+read opleaf a[i]
+read opleaf a[n]
+read operation
+read opleaf a[n]
+read opleaf x
+read opleaf quicksort(m,j);
+read opleaf m
+read opleaf j
+read opleaf quicksort(+(i,1),n)
+read operation
+read opleaf i
+read opleaf 1
+read opleaf n
 read function
 read variable
 read variable
-read variable
-read printf
+read operation
+read opleaf max
+read opleaf 0
+read while
+read operation
+read operation
+read opleaf max
+read opleaf 0
+read operation
+read opleaf max
+read opleaf 100
 read printf
 read scanf
 read operation
-read opleaf a
+read opleaf max
+read for
+read operation
+read opleaf i
+read opleaf 0
+read operation
+read opleaf i
+read opleaf max
+read opleaf (i)++
 read printf
+read operation
+read opleaf i
+read opleaf 1
 read scanf
 read operation
-read opleaf b
+read opleaf j
+read operation
+read opleaf a[i]
+read opleaf j
+read opleaf quicksort(0,-(max,1));
+read opleaf 0
+read operation
+read opleaf max
+read opleaf 1
+read for
+read operation
+read opleaf i
+read opleaf 0
+read operation
+read opleaf i
+read opleaf max
+read opleaf (i)++
 read printf
-read scanf
-read operation
-read opleaf c
-read printf
-read if
-read operation
-read operation
-read operation
-read opleaf a
-read operation
-read opleaf b
-read opleaf c
-read operation
-read opleaf b
-read operation
-read opleaf a
-read opleaf c
-read operation
-read opleaf c
-read operation
-read opleaf a
-read opleaf b
-read if
-read operation
-read operation
-read opleaf a
-read opleaf b
-read operation
-read opleaf b
-read opleaf c
-read printf
-read if
-read operation
-read operation
-read operation
-read opleaf a
-read opleaf b
-read operation
-read opleaf a
-read opleaf c
-read operation
-read opleaf c
-read opleaf b
-read printf
-read printf
+read opleaf a[i]
 read printf
 read return
 read opleaf 0
