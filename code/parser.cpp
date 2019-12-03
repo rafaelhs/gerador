@@ -57,6 +57,26 @@ std::string getObjType(std::string line) {
     int i = 0;
     char c = ' ';
     std::string str = "";
+
+    if(line.at(0) == '(') {
+        i++;
+        c = line.at(i);
+        while(c != ')') {
+            i++;
+            c = line.at(i);
+        }
+        i++;
+        while(i < str.size()){
+            c = line.at(i);
+            str.append(1, c);
+            i++;
+        }
+        if(str == "++"){
+            return str;
+        }
+    }
+
+
     c = line.at(0);
     while(!(c >= 65 && c <= 90) && !(c >= 97 && c <= 122) && !(c >= '0' && c <= '9') &&  c != '_' &&
             c != '+' && c != '-' && c != '*' && c != '/' && c != '%' && c != '&' && c != '|' && 
@@ -97,6 +117,7 @@ int getNum(std::string str) {
     if(str == "EXIT") return EXIT;
     if(str == "RETURN") return RETURN;
     if(str == "+") return OPERATION;
+    if(str == "++") return OPERATION;
     if(str == "-") return OPERATION;
     if(str == "*") return OPERATION;
     if(str == "/") return OPERATION;
@@ -117,6 +138,7 @@ int getNum(std::string str) {
 
 int getOpType(std::string str) {
     if(str == "+") return OP_ADD;
+    if(str == "++") return OP_INC;
     if(str == "-") return OP_SUB;
     if(str == "*") return OP_MUL;
     if(str == "/") return OP_DIV;
@@ -136,6 +158,7 @@ int getOpType(std::string str) {
 
 int getOpGroup(std::string str) {
     if(str == "+") return ARITHMETICAL;
+    if(str == "++") return ARITHMETICAL;
     if(str == "-") return ARITHMETICAL;
     if(str == "*") return ARITHMETICAL;
     if(str == "/") return ARITHMETICAL;
@@ -160,6 +183,39 @@ bool isNumber(std::string str) {
     }
     return false;
 };
+
+std::vector<std::string> splitArray(std::string str) {
+    std::vector<std::string> tokens;
+    std:: string s = "";
+    char c;
+    int i = 0, flag = 0;;
+    
+    c = str.at(i);
+    while(c != '['){
+        s.append(1, c);
+        i++;
+        if(i >= str.size()) {
+            tokens.push_back(s);
+            return tokens;
+        }
+        c = str.at(i);
+    }
+    tokens.push_back(s);
+    s = "";
+    i++;
+    c = str.at(i);
+    while(c != ']'){
+        s.append(1, c);
+        i++;
+        if(i >= str.size()) {
+            tokens.push_back(s);
+            return tokens;
+        }
+        c = str.at(i);
+    }
+    tokens.push_back(s);
+    return tokens;
+}
 
 std::vector<std::string> split(std::string str) {
     std::vector<std::string> tokens;
@@ -231,13 +287,26 @@ std::vector<std::string> splitSemiCollon(std::string str) {
     std::vector<std::string> tokens;
 
     char c;
-    int i = 0;
+    int i = 0, flag = 0;
 
     while(i < str.size()) {
         c = str.at(i);
         if(c == ';'){
             tokens.push_back(s);
             s = "";
+        } else if(c == '(') { //se encontra a abertura de parenteses continua copiando ate encontrar o fechamento
+            flag++;
+            while(flag > 0) {
+                s.append(1, c);
+                i++;
+                c = str.at(i);
+                if(c == ')') {
+                    flag--;
+                }else if(c == '(') {
+                    flag++;
+                }
+            }
+            s.append(1, c);
         } else {
             s.append(1, c);
         }
@@ -251,11 +320,34 @@ std::vector<std::string> splitSemiCollon(std::string str) {
 }
 
 std:: vector<std::string> splitOperation(std::string str) {
-    std::string s = "";
+    std::string s = "", s2 = "";
     std::vector<std::string> tokens;
     int flag = 0;
     char c;
     int i = 0;
+
+    if(str.at(0) == '(') {
+        i++;
+        c = str.at(i);
+        while(c != ')') {
+            s.append(1, c);
+            i++;
+            c = str.at(i);
+        }
+        i++;
+        while(i < str.size()){
+            c = str.at(i);
+            s2.append(1, c);
+            i++;
+        }
+        tokens.push_back(s2);
+        tokens.push_back(s);
+        return tokens;
+    }
+
+
+
+
     c = str.at(i);
     while(c != '(') {
         s.append(1, c);
@@ -360,9 +452,17 @@ Constant* readConstant(std::string arg) {
 GlobalVariable* readGlobalVariable(std::string arg) {
     cout << "read global variable\n";
     GlobalVariable *gv = new GlobalVariable();
-    std::vector<std::string> splitLine = split(arg);
+    std::vector<std::string> splitLine = split(arg), arrSplit;
     gv->id = splitLine[2];
-    gv->type = splitLine[4];
+    arrSplit = splitArray(splitLine[4]);
+    gv->type = arrSplit[0];
+    if(arrSplit.size() > 1) {
+        gv->isArray = true;
+        gv->arraySize = stoi(arrSplit[1]);
+    }else{
+        gv->isArray = false;
+        gv->arraySize = 0;
+    }
     return gv;
 }
 
@@ -393,11 +493,13 @@ While* readWhile(std::string str) {
         c = new container();
         c->type = OPERATION;
         c->obj = op;
+        w->condition = c;
     }else{//opleaf
         opl = readOpLeaf(arg[0]);
         c = new container();
         c->type = OPLEAF;
         c->obj = opl;
+        w->condition = c;
     }
     commands = splitSemiCollon(arg[1]);
     for(i = 0; i < commands.size(); i++) {
@@ -504,11 +606,13 @@ DoWhile* readDoWhile(std::string str) {
         c = new container();
         c->type = OPERATION;
         c->obj = op;
+        dw->condition = c;
     }else{//opleaf
         opl = readOpLeaf(arg[1]);
         c = new container();
         c->type = OPLEAF;
         c->obj = opl;
+        dw->condition = c;
     }
 
     commands = splitSemiCollon(arg[0]);
@@ -588,9 +692,154 @@ DoWhile* readDoWhile(std::string str) {
 }
 
 For* readFor(std::string str) {
-    //TODO
+    cout << "read for\n";
+    For *fr = new For(), *fr2;
+    DoWhile *dw;
+    While *w;
+    Operation *op;
+    OpLeaf *opl;
+    container *c;
+    Return *r;
+    If *iff;
+    Printf *prt;
+    Scanf *scf;
+    int i;
+    std::vector<std::string> arg, commands;
 
-}
+    fr->idLabel = contFor;
+    contFor++;
+    
+    arg = splitComma(str);
+
+    //inicializacao
+    if(arg[0] != "") {
+        if(getNum(getObjType(arg[0])) == OPERATION) {//operacao
+            op = readOperation(arg[0]);
+            c = new container();
+            c->type = OPERATION;
+            c->obj = op;
+            fr->init = c;
+        }else{//opleaf
+            opl = readOpLeaf(arg[0]);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            fr->init = c;
+        }
+    }
+    
+
+    //condicao de parada
+    if(arg[1] != "") {
+        if(getNum(getObjType(arg[1])) == OPERATION) {//operacao
+            op = readOperation(arg[1]);
+            c = new container();
+            c->type = OPERATION;
+            c->obj = op;
+            fr->condition = c;
+        }else{//opleaf
+            opl = readOpLeaf(arg[1]);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            fr->condition = c;
+        }
+    }
+
+    //ajuste de valores
+    if(arg[2] != "") {
+        if(getNum(getObjType(arg[2])) == OPERATION) {//operacao
+            op = readOperation(arg[2]);
+            c = new container();
+            c->type = OPERATION;
+            c->obj = op;
+            fr->adjustment = c;
+        }else{//opleaf
+            opl = readOpLeaf(arg[2]);
+            c = new container();
+            c->type = OPLEAF;
+            c->obj = opl;
+            fr->adjustment = c;
+        }
+    }
+
+    //comandos
+
+    commands = splitSemiCollon(arg[3]);
+    for(i = 0; i < commands.size(); i++) {
+        switch(getNum(getObjType(commands[i]))){
+            case RETURN:
+                r = readReturn(commands[i]);
+                c = new container();
+                c->type = RETURN;
+                c->obj = r;
+                fr->commands.push_back(c);
+                break;
+            case OPERATION:
+                op = readOperation(commands[i]);
+                c = new container();
+                c->type = OPERATION;
+                c->obj = op;
+                fr->commands.push_back(c);
+                break;
+            case IF:
+                iff = readIf(commands[i]);
+                c = new container();
+                c->type = IF;
+                c->obj = iff;
+                fr->commands.push_back(c);
+                break;
+            case WHILE:
+                w = readWhile(commands[i]);
+                c = new container();
+                c->type = WHILE;
+                c->obj = w;
+                fr->commands.push_back(c);
+                break;
+            case DOWHILE:
+                dw = readDoWhile(commands[i]);
+                c = new container();
+                c->type = DOWHILE;
+                c->obj = dw;
+                fr->commands.push_back(c);
+                break;
+            case FOR:
+                fr2 = readFor(commands[i]);
+                c = new container();
+                c->type = FOR;
+                c->obj = fr2;
+                fr->commands.push_back(c);
+                break;
+            case PRINTF:
+                prt = readPrintf(commands[i]);
+                c = new container();
+                c->type = PRINTF;
+                c->obj = prt;
+                fr->commands.push_back(c);
+                AST->printF.push_back(c);
+                break;
+            case SCANF:
+                scf = readScanf(commands[i]);
+                c = new container();
+                c->type = SCANF;
+                c->obj = scf;
+                fr->commands.push_back(c);
+                break;
+            default: 
+                if(AST->symbTable[getObjType(commands[i])] != NULL) { //encontrado na tabela de simbolos
+                    if(AST->symbTable[getObjType(commands[i])]->type = FUNCTION){ //chamada de funcao encontrada
+                        opl = readOpLeaf(commands[i]);
+                        c = new container();
+                        c->type = OPLEAF;
+                        c->obj = opl;
+                        fr->commands.push_back(c);
+                    }
+                }
+                break;
+        }
+    }
+    return fr;
+}   
 
 
 
@@ -913,25 +1162,35 @@ OpLeaf* readOpLeaf(std::string arg) {
     OpLeaf *opl = new OpLeaf(), *opl2;
     Operation *op;
     Variable *v;
+    GlobalVariable *gv;
+    Constant *cnst;
     Parameter *p;
     std::string vname;
     container *c;
     Function *f;
-    std::vector<std::string> param;
+    std::vector<std::string> param, arr;
     int i;
     
     vname = splitOperation(arg)[0];
-    c = AST->symbTable[vname]; //procura na global
+    arr = splitArray(vname);
+    c = AST->symbTable[arr[0]]; //procura na global
     if(c == NULL) { //caso nao encontrar
-        c = CURRENTFUNCTION->symbTable[vname]; //procura na local
+        c = CURRENTFUNCTION->symbTable[arr[0]]; //procura na local
     }
     if(c == NULL) { //caso nao encontrar em nenhuma das tabelas : constante
         //nao encontrado em nenhum lugar, e um valor constante
         opl->type = OP_CONSTANT;
         opl->valueType = INT;
-        opl->valueId = vname;
+        opl->valueId = arr[0];
     } else { //encontraddo em alguma das tabelas
         switch(c->type){
+            case CONSTANT:
+                cout << "!";
+                cnst = (Constant *)c->obj;
+                opl->type = OP_CONSTANT;
+                opl->valueType = INT;
+                opl->valueId = cnst->value;
+                break;
             case VARIABLE:
                 v = (Variable *)c->obj;
                 opl->type = OP_VARIABLE;
@@ -941,6 +1200,31 @@ OpLeaf* readOpLeaf(std::string arg) {
                     opl->valueType = INT;
                 }
                 opl->valueId = v->id;
+                break;
+            case GLOBALVARIABLE:
+                gv = (GlobalVariable *)c->obj;
+                if(!gv->isArray){
+                    opl->type = OP_VARIABLE;
+                    if(gv->type == "char"){
+                        opl->valueType = CHAR;
+                    }else{
+                        opl->valueType = INT;
+                    }
+                    opl->valueId = gv->id;
+                }else{
+                    opl->type = OP_ARRAY;
+                    if(gv->type == "char"){
+                        opl->valueType = CHAR;
+                    }else{
+                        opl->valueType = INT;
+                    }
+                    opl->valueId = gv->id;
+                    opl2 = readOpLeaf(arr[1]);
+                    c = new container();
+                    c->type = OPLEAF;
+                    c->obj = opl2;
+                    opl->values.push_back(c);
+                }
                 break;
             case PARAMETER:
                 p = (Parameter *)c->obj;
@@ -987,6 +1271,7 @@ OpLeaf* readOpLeaf(std::string arg) {
                 break;
         }
     }
+
     return opl;
 }
 
@@ -1095,11 +1380,4 @@ int main() {
     return 1;
 }
 
-/**
- * constants
- * global variables
- * operations in functions
- * while
- * do while
- * for
- */
+

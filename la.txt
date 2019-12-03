@@ -1,0 +1,123 @@
+.data           #rotulos e textos printf
+        printF0:  .asciiz "=== Determinar Tipo de Triangulo ===\n\n"
+        printF1:  .asciiz "Entre com o tamanho do lado A: "
+        printF2:  .asciiz "Entre com o tamanho do lado B: "
+        printF3:  .asciiz "Entre com o tamanho do lado C: "
+        printF4:  .asciiz "\n"
+        printF5:  .asciiz "Triangulo Equilatero."
+        printF6:  .asciiz "Triangulo Isosceles."
+        printF7:  .asciiz "Triangulo Escaleno."
+        printF8:  .asciiz "Nao eh Triangulo!!!\n"
+.text   #codigo
+main:
+#a#b#c  #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF0
+        syscall
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF1
+        syscall
+        #SCANF
+        addi $v0, $zero,5
+        syscall
+        add $t0, $v0 ,$zero
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF2
+        syscall
+        #SCANF
+        addi $v0, $zero,5
+        syscall
+        add $t1, $v0 ,$zero
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF3
+        syscall
+        #SCANF
+        addi $v0, $zero,5
+        syscall
+        add $t2, $v0 ,$zero
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF4
+        syscall
+        #IF
+        #LOGICAL_AND
+        #LOGICAL_AND
+        #LESS_THAN
+        add $t3, $t1, $t2
+#AMIGO ESTOUAQUI:       #OP_TEMPORARY
+        slt $t4 ,$t0 ,$t3
+        beq $t4 ,$zero, else0
+        #LESS_THAN
+        add $t3, $t0, $t2
+#AMIGO ESTOUAQUI:       #OP_TEMPORARY
+        slt $t4 ,$t1 ,$t3
+        beq $t4 ,$zero, else0
+        #LESS_THAN
+        add $t4, $t0, $t1
+#AMIGO ESTOUAQUI:       #OP_TEMPORARY
+        slt $t5 ,$t2 ,$t4
+        beq $t5 ,$zero, else0
+then0:
+        #COMANDOS - THEN - IF0
+        #IF
+        #LOGICAL_AND
+        #EQUAL
+#AMIGO ESTOUAQUI:       #OP_VARIABLE
+        bne $t0,$t1, else1
+        #EQUAL
+#AMIGO ESTOUAQUI:       #OP_VARIABLE
+        bne $t1,$t2, else1
+then1:
+        #COMANDOS - THEN - IF1
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF5
+        syscall
+        j fimIf1
+else1:
+        #COMANDOS - ELSE - IF1
+        #IF
+        #LOGICAL_OR
+        #LOGICAL_OR
+        #EQUAL
+#AMIGO ESTOUAQUI:       #OP_VARIABLE
+        beq $t0,$t1, then2
+        #EQUAL
+#AMIGO ESTOUAQUI:       #OP_VARIABLE
+        beq $t0,$t2, then2
+        #EQUAL
+#AMIGO ESTOUAQUI:       #OP_VARIABLE
+        beq $t2,$t1, then2
+        j else2
+then2:
+        #COMANDOS - THEN - IF2
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF6
+        syscall
+        j fimIf2
+else2:
+        #COMANDOS - ELSE - IF2
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF7
+        syscall
+        j fimIf2
+fimIf2:
+        j fimIf1
+fimIf1:
+        j fimIf0
+else0:
+        #COMANDOS - ELSE - IF0
+        #PRINTF
+        addi $v0, $zero, 4
+        la $a0, printF8
+        syscall
+        j fimIf0
+fimIf0:
+        #RETURN
+addi $v0, $zero, 10
+syscall

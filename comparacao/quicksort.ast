@@ -14,7 +14,6 @@ FUNCTION: quicksort
    VARIABLE: v TYPE: int
    VARIABLE: x TYPE: int
 
-=(non_stop,1);
 IF(<=(n,m),RETURN());
 =(i,-(m,1));
 =(j,n);
