@@ -10,6 +10,9 @@ read variable
 read variable
 read variable
 read variable
+read operation
+read opleaf non_stop
+read opleaf 1
 read if
 read operation
 read opleaf n
@@ -26,11 +29,13 @@ read opleaf n
 read operation
 read opleaf v
 read opleaf a[n]
+read opleaf n
 read while
 read opleaf non_stop
 read dowhile
 read operation
 read opleaf a[i]
+read opleaf i
 read opleaf v
 read operation
 read opleaf i
@@ -40,6 +45,7 @@ read opleaf 1
 read dowhile
 read operation
 read opleaf a[j]
+read opleaf j
 read opleaf v
 read operation
 read opleaf j
@@ -56,20 +62,28 @@ read opleaf 0
 read operation
 read opleaf x
 read opleaf a[i]
+read opleaf i
 read operation
 read opleaf a[i]
+read opleaf i
 read opleaf a[j]
+read opleaf j
 read operation
 read opleaf a[j]
+read opleaf j
 read opleaf x
 read operation
 read opleaf x
 read opleaf a[i]
+read opleaf i
 read operation
 read opleaf a[i]
+read opleaf i
 read opleaf a[n]
+read opleaf n
 read operation
 read opleaf a[n]
+read opleaf n
 read opleaf x
 read opleaf quicksort(m,j);
 read opleaf m
@@ -104,7 +118,8 @@ read opleaf 0
 read operation
 read opleaf i
 read opleaf max
-read opleaf (i)++
+read operation
+read opleaf i
 read printf
 read operation
 read opleaf i
@@ -114,6 +129,7 @@ read operation
 read opleaf j
 read operation
 read opleaf a[i]
+read opleaf i
 read opleaf j
 read opleaf quicksort(0,-(max,1));
 read opleaf 0
@@ -127,9 +143,11 @@ read opleaf 0
 read operation
 read opleaf i
 read opleaf max
-read opleaf (i)++
+read operation
+read opleaf i
 read printf
 read opleaf a[i]
+read opleaf i
 read printf
 read return
 read opleaf 0
